@@ -6,7 +6,7 @@ import json
 import sys
 from openai import OpenAI
 from datetime import datetime
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = "Add your key"
 client = OpenAI(api_key = OPENAI_API_KEY)
 # Openrouter 
 # EV = prob * upside - prob *downside
