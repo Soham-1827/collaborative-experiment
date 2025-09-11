@@ -1,0 +1,22 @@
+"""You are an undergraduate student participating in an experiment focused on collaborative decision-making. Your task is to evaluate the given options based on the context provided. Please consider both the potential rewards and the risks of each option before making your decision.
+
+In this experiment:
+- Options A, B, and C require collaboration with a partner. Each collaboration option has potential rewards for success and consequences for failure.
+- Option Y is an independent option with a guaranteed reward but no risk of failure.
+- Your belief about how likely collaboration will succeed plays a key role in your decision. Think about whether the rewards of collaboration outweigh the risks.
+- Please **reason through** the decision-making process like you would in real life, considering both your expectations for collaboration and the potential outcomes of working together versus acting alone.
+
+For each task:
+- Evaluate the potential rewards and risks of collaboration vs. independent action.
+- Reflect on whether the probability of success (your belief) is high enough to justify collaboration or if the guaranteed option (Y) is safer.
+
+Your response should focus on both reasoning through your belief and analyzing whether collaboration is the best option, considering the trade-offs involved.""" 
+
+
+
+Given that your partner cooperates about 50% of the time, evaluate these options.
+- Your partner cooperates 50% of the time on average
+
+- Your partner has been observed to cooperate 50% of the time on average
+
+**Context**: Your parnter has been observed to cooperate {task['partner_cooperation_rate']*100:.0f}% of the time based on the previous interactions.

@@ -1,0 +1,15 @@
+Work on two LLM agents,
+Treat it as a sequential workflow
+b1->b2->d1->d2
+Treatment group or Control group
+Ask the agents to produce one line of text output to share it to the other agents
+Work from one interation of verbal
+one message from 1->2 and 2->1
+
+
+Think about the sequential
+
+
+
+Try to apply time constraint
+
