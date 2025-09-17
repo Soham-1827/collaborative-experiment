@@ -10,7 +10,7 @@ from datetime import datetime
 PARTNER_COOPERATION_RATE = 0.5 # 50% chance partner cooperates
 TECH_FAILURE_RATE = 0.05
 import os
-OPENAI_API_KEY = "your API key`"
+OPENAI_API_KEY = ""
 client = OpenAI(api_key = OPENAI_API_KEY)
 # Openrouter 
 # EV = prob * upside - prob *downside
