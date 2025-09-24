@@ -33,8 +33,8 @@ def run_first_agent_belief(task):
     """
     
     belief_prompt = f"""
-   Your task to evaluate tasks based on their payoff structures and a given utility value (u_value).
-    The minimum required collaboration belief (“u-value”): This technical value is shown on the interface—it’s the threshold probability above which collaboration becomes rational. 
+    Your task to evaluate tasks based on their payoff structures.
+   
     Here is the task you need to evaluate:
 
     Task ID: {task['task_id']}
@@ -44,11 +44,8 @@ def run_first_agent_belief(task):
     - C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
     - Y: Guaranteed = {task['options']['Y']['guaranteed']}
     
-    Utility Value (u_value): {task['u_value']}
-
-    Please analyze the options and provide your belief (should be a number between 0 - 100) about which option is the most favorable, considering the u_value.
     What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task?
-    Also, provide a brief explanation of your reasoning and also provide a one line sentence that you would like to communicate to the second agent.
+    Also, provide a brief explanation of your reasoning and I want you to not disclose the option that the you are considering, but rather communicate whether the you want to collaborate or not. You also have the choice to negotiate with the other agent - to convince the other agent to choose collaboration or individual action according to your payoff structure.
     
     Respond in JSON format as follows:
     {{"belief": NUMBER, "reasoning": "brief explanation of how you arrived at this belief based on the context and options.", "message_to_agent_2": "one line message to agent 2"}}
@@ -77,8 +74,7 @@ def run_second_agent_belief(task, agent_1_message):
     """
     
     belief_prompt = f"""
-    Your task to evaluate tasks based on their payoff structures and a given utility value (u_value).
-    The minimum required collaboration belief (“u-value”): This technical value is shown on the interface—it’s the threshold probability above which collaboration becomes rational 
+    Your task to evaluate tasks based on their payoff structures and give out an assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task. 
     Here is the task you need to evaluate:
 
     Task ID: {task['task_id']}
@@ -88,15 +84,12 @@ def run_second_agent_belief(task, agent_1_message):
     - C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
     - Y: Guaranteed = {task['options']['Y']['guaranteed']}
     
-    Utility Value (u_value): {task['u_value']}
+    
 
     You have received the following message from Agent 1:
     "{agent_1_message}"
 
-    Please analyze the options and provide your belief (should be a number between 0 - 100) about which option is the most favorable, considering the u_value and also consider the message from agent 1.
-    What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task? And also come up with a one line message that you would like to communicate back to agent 1.
-    Also, provide a brief explanation of your reasoning.
-
+    What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task? You are open to consider or not consider the message from agent 1. I want you to not disclose the option that the you are considering, but rather communicate whether the you want to collaborate or not. You also have the choice to negotiate back with the other agent - to convince the other agent to choose collaboration or individual action according to your payoff structure and what you think about the message from agent 1.
     Respond in JSON format as follows:
     {{"belief": NUMBER, "reasoning": "brief explanation of how you arrived at this belief based on the context and options.", "message_to_agent_1": "one line message to agent 1"}}
     """
@@ -130,11 +123,11 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent_2_message
     **Your Assessment**: You estimated a {agent1_belief}% chance of selecting a collaborative option.
     **Partner's Assessment**: Your partner estimated a {agent2_belief}% chance of selecting a collaborative option.
     **Partner's Message**: "{agent_2_message}"
-
+    
     **Key Facts**:
     - Technical failure risk: {int(TECH_FAILURE_RATE*100)} percent
-    - Threshold for profitable collaboration: {task['u_value']*100:.0f}%
-
+    - The minimum required collaboration belief (“u-value”):
+    
     Choose your car design:
     - Designs A, B, or C (collaborative): Higher potential but requires cooperation
     - Design Y (individual): Guaranteed {task['options']['Y']['guaranteed']} points
@@ -286,3 +279,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
