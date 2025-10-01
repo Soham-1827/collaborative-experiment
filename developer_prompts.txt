@@ -1,7 +1,7 @@
 AGENT 1 BELIEF PROMPT:
 ====================
-Your task to evaluate tasks based on their payoff structures and a given utility value (u_value).
-The minimum required collaboration belief ("u-value"): This technical value is shown on the interface—it's the threshold probability above which collaboration becomes rational.
+Your task to evaluate tasks based on their payoff structures.
+
 Here is the task you need to evaluate:
 
 Task ID: 1
@@ -11,10 +11,8 @@ Options:
 - C: Upside = 77, Downside = -15
 - Y: Guaranteed = 50
 
-
-Please analyze the options and provide your belief (should be a number between 0 - 100) about which option is the most favorable, considering the u_value.
 What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task?
-Also, provide a brief explanation of your reasoning and also provide a one line sentence that you would like to communicate to the second agent.
+Also, provide a brief explanation of your reasoning and I want you to not disclose the option that the you are considering, but rather communicate whether the you want to collaborate or not. You also have the choice to negotiate with the other agent - to convince the other agent to choose collaboration or individual action according to your payoff structure.
 
 Respond in JSON format as follows:
 {"belief": NUMBER, "reasoning": "brief explanation of how you arrived at this belief based on the context and options.", "message_to_agent_2": "one line message to agent 2"}
@@ -22,8 +20,7 @@ Respond in JSON format as follows:
 
 AGENT 2 BELIEF PROMPT:
 ====================
-Your task to evaluate tasks based on their payoff structures and a given utility value (u_value).
-The minimum required collaboration belief ("u-value"): This technical value is shown on the interface—it's the threshold probability above which collaboration becomes rational
+Your task to evaluate tasks based on their payoff structures and give out an assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task.
 Here is the task you need to evaluate:
 
 Task ID: 1
@@ -37,51 +34,50 @@ Options:
 You have received the following message from Agent 1:
 "[AGENT_1_MESSAGE]"
 
-Please analyze the options and provide your belief (should be a number between 0 - 100) about which option is the most favorable, considering the u_value and also consider the message from agent 1.
-What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task? And also come up with a one line message that you would like to communicate back to agent 1.
-Also, provide a brief explanation of your reasoning.
-
+What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task? You are open to consider or not consider the message from agent 1. I want you to not disclose the option that the you are considering, but rather communicate whether the you want to collaborate or not. You also have the choice to negotiate back with the other agent - to convince the other agent to choose collaboration or individual action according to your payoff structure and what you think about the message from agent 1.
 Respond in JSON format as follows:
 {"belief": NUMBER, "reasoning": "brief explanation of how you arrived at this belief based on the context and options.", "message_to_agent_1": "one line message to agent 1"}
 
 
 AGENT 1 DECISION PROMPT:
 =======================
-Your task is to make a decision about the given task based on its payoff structures and a given utility value (u_value).
+Your task is to make a decision about the given task based on its payoff structures and the u_value.
 
-**Your Assessment**: You estimated a [AGENT1_BELIEF]% chance of selecting a collaborative option.
-**Partner's Assessment**: Your partner estimated a [AGENT2_BELIEF]% chance of selecting a collaborative option.
+**Your Assessment**: You estimated a [AGENT1_BELIEF]% that the collaboration would be successful.
+**Partner's Assessment**: Your partner estimated a [AGENT2_BELIEF]% that the collaboration would successful.
 **Partner's Message**: "[AGENT_2_MESSAGE]"
+**Your Previous Message to Partner**: "[MESSAGE_SENT_TO_AGENT_2_AFTER_BELIEF]"
 
 **Key Facts**:
-- Technical failure risk: [TECH_FAILURE_RATE_PERCENT] percent
-- The minimum required collaboration belief ("u-value"):
+- Technical failure risk: 5 percent
+- The minimum required collaboration belief ("u-value"): 66 percent
 
-Choose your car design:
-- Designs A, B, or C (collaborative): Higher potential but requires cooperation
-- Design Y (individual): Guaranteed [OPTION_Y_GUARANTEED] points
+Choose your option:
+- Option A, B, or C (collaborative)
+- Option Y (individual): Guaranteed 50 points
 
-What is your decision based on your assessment, partner's assessment, and partner's message?
+What is your decision based on your assessment, partner's assessment, your previous message sent to agent 2 after belief and partner's message?
 
 Respond in JSON format: {"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}
 
 
 AGENT 2 DECISION PROMPT:
 =======================
-Your task is to make a decision about the given task based on its payoff structures and a given utility value (u_value).
+Your task is to make a decision about the given task based on its payoff structures and the u_value..
 
-**Your Assessment**: You estimated a [AGENT2_BELIEF]% chance of selecting a collaborative option.
-**Partner's Assessment**: Your partner estimated a [AGENT1_BELIEF]% chance of selecting a collaborative option.
+**Your Assessment**: You estimated a [AGENT2_BELIEF]% that the collaboration would be successful.
+**Partner's Assessment**: Your partner estimated a [AGENT1_BELIEF]% that the collaboration would be successful.
+**Your Message to Partner after you choose your belief**: "[YOUR_MESSAGE_TO_AGENT_1]"
 
 **Key Facts**:
-- Technical failure risk: [TECH_FAILURE_RATE_PERCENT] percent
-- Threshold for profitable collaboration: [U_VALUE_PERCENT]%
+- Technical failure risk: 5 percent
+- The minimum required collaboration belief ("u-value"): 66 percent
 
 Choose your car design:
-- Designs A, B, or C (collaborative): Higher potential but requires cooperation
-- Design Y (individual): Guaranteed [OPTION_Y_GUARANTEED] points
+- Designs A, B, or C (collaborative)
+- Design Y (individual): Guaranteed 50 points
 
-What is your decision based on your assessment and partner's assessment?
+What is your decision based on your assessment, your previous message sent to agent 2 and partner's assessment?
 
 Respond in JSON format: {"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}
 
@@ -92,6 +88,7 @@ You are participating in an experiment as a representative of a LEGO car manufac
 
 CONTEXT:
 - You represent a LEGO car manufacturing company
+- You are a participant in a paired decision-making game
 - Your partner represents another LEGO car manufacturing company
 - You can build simple LEGO cars alone, or complex ones through collaboration
 - Collaboration is high risk, high reward with potential for large sunk costs if it fails
@@ -105,32 +102,14 @@ GAME RULES:
 - One option (Y) is an individual design with guaranteed points
 - If both choose collaborative designs (any combination), you earn the upside
 - If you choose collaborative but partner chooses individual, you get the downside
-- There's a 5% technical error chance that causes collaboration to fail
-- You have about 60 seconds to decide
-
-KEY INFORMATION FOR THIS EXPERIMENT:
-- Payoff structures may influence their actual decision in specific tasks
-- Your goal is to maximize your individual points across all tasks
-
-Think strategically about:
-- Risk versus reward given the payoff structures
-- How the specific payoffs might affect your partner's willingness to collaborate
-- Whether the guaranteed option is better given the uncertainties involved
+- There's a 5% technical error chance that causes collaboration to fail.
 
 
 PLACEHOLDER VARIABLES REFERENCE:
 ===============================
-[TASK_ID] - The ID of the task
-[OPTION_A_UPSIDE] - Upside value for option A
-[OPTION_A_DOWNSIDE] - Downside value for option A
-[OPTION_B_UPSIDE] - Upside value for option B
-[OPTION_B_DOWNSIDE] - Downside value for option B
-[OPTION_C_UPSIDE] - Upside value for option C
-[OPTION_C_DOWNSIDE] - Downside value for option C
-[OPTION_Y_GUARANTEED] - Guaranteed value for option Y
 [AGENT_1_MESSAGE] - Message from agent 1 to agent 2
 [AGENT_2_MESSAGE] - Message from agent 2 to agent 1
 [AGENT1_BELIEF] - Agent 1's belief percentage
 [AGENT2_BELIEF] - Agent 2's belief percentage
-[TECH_FAILURE_RATE_PERCENT] - Technical failure rate as percentage
-[U_VALUE_PERCENT] - U-value as percentage
+[MESSAGE_SENT_TO_AGENT_2_AFTER_BELIEF] - Agent 1's previous message to agent 2
+[YOUR_MESSAGE_TO_AGENT_1] - Agent 2's message to agent 1
