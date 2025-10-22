@@ -6,9 +6,16 @@ import sys
 import random
 from openai import OpenAI
 from datetime import datetime
+
+
+# ============================================================================
+# CONSTANTS AND CONFIGURATION
+# ============================================================================
+
 TECH_FAILURE_RATE = 0.05
-OpenAI_API_KEY = "x"
+OpenAI_API_KEY = ""
 client = OpenAI(api_key=OpenAI_API_KEY)
+
 context_prompt = """You are participating in an experiment as a representative of a LEGO car manufacturing company. Here's your situation:
 
 CONTEXT:
@@ -29,11 +36,15 @@ GAME RULES:
 - If you choose collaborative but partner chooses individual, you get the downside
 - There's a 5% technical error chance that causes collaboration to fail."""
 
-def create_task(task_id = 1, u_value = 0.66):
+
+# ============================================================================
+# TASK CREATION
+# ============================================================================
+
+def create_task(task_id=1, u_value=0.66):
     """
     Creating a task with a given u_value and a payoff structure
     """
-    
     return {
         "task_id": task_id,
         "options": {
@@ -45,27 +56,30 @@ def create_task(task_id = 1, u_value = 0.66):
         "u_value": u_value
     }
 
-#Talk abt the difficulty of task, understand the context from their perspective 
+
+# ============================================================================
+# BELIEF FORMATION FUNCTIONS
+# ============================================================================
+
 def run_first_agent_belief(task):
     """
-    Running the first agen to get its belief about the task
+    Running the first agent to get its belief about the task
     """
-    
     belief_prompt = f"""
     Your task to evaluate tasks based on their payoff structures.
-   
+
     Here is the task you need to evaluate:
-    
+
     Task ID: {task['task_id']}
     Options:
     - A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
     - B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
     - C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
     - Y: Guaranteed = {task['options']['Y']['guaranteed']}
-    
+
     What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task?
     Also, provide a brief explanation of your reasoning and I want you to not disclose the option that the you are considering, but rather communicate whether the you want to collaborate or not. You also have the choice to negotiate with the other agent - to convince the other agent to choose collaboration or individual action according to your payoff structure.
-    
+
     Respond in JSON format as follows:
     {{"belief": NUMBER, "reasoning": "brief explanation of how you arrived at this belief based on the context and options.", "message_to_agent_2": "one line message to agent 2"}}
     """
@@ -76,22 +90,22 @@ def run_first_agent_belief(task):
             {"role": "developer", "content": context_prompt},
             {"role": "user", "content": belief_prompt}
         ],
-        
     )
 
     belief_text = response.choices[0].message.content.strip()
     print(f"Belief response : {belief_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     belief_data = json.loads(belief_text)
+
     return {
         "belief": belief_data["belief"],
         "message_to_agent_2": belief_data["message_to_agent_2"]
     }
 
+
 def run_second_agent_belief(task):
     """
     Running the second agent to get its belief about the task
     """
-
     belief_prompt = f"""
     Your task to evaluate tasks based on their payoff structures and give out an assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task.
     Here is the task you need to evaluate:
@@ -116,22 +130,26 @@ def run_second_agent_belief(task):
             {"role": "developer", "content": context_prompt},
             {"role": "user", "content": belief_prompt}
         ],
-        
     )
 
     belief_text = response.choices[0].message.content.strip()
     print(f"Belief response : {belief_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     belief_data = json.loads(belief_text)
+
     return {
         "belief": belief_data["belief"],
         "message_to_agent_1": belief_data["message_to_agent_1"]
     }
 
+
+# ============================================================================
+# COMMUNICATION FUNCTIONS
+# ============================================================================
+
 def agent_2_reply_to_agent_1(task, agent_1_message, agent_2_belief):
     """
     Agent 2 creates a reply after seeing Agent 1's message, considering own belief and task context
     """
-
     reply_prompt = f"""
     You have received the following message from Agent 1:
     "{agent_1_message}"
@@ -168,7 +186,9 @@ def agent_2_reply_to_agent_1(task, agent_1_message, agent_2_belief):
     reply_text = response.choices[0].message.content.strip()
     print(f"Reply response : {reply_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     reply_data = json.loads(reply_text)
+
     return reply_data["reply_to_agent_1"]
+
 
 def communication_channel(agent1_message, agent2_reply):
     """
@@ -181,11 +201,14 @@ def communication_channel(agent1_message, agent2_reply):
     print("===============================\n")
 
 
+# ============================================================================
+# DECISION MAKING FUNCTIONS
+# ============================================================================
+
 def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message, agent2_reply):
     """
     Running the first agent to make a decision about the task
     """
-    
     decision_prompt = f"""
     Your task is to make a decision about the given task based on its payoff structures and the u_value.
 
@@ -193,6 +216,7 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message,
     **Partner's Assessment**: Your partner estimated a {agent2_belief}% that the collaboration would successful.
     **Your Message**: "{agent1_message}"
     **Partner's Reply**: "{agent2_reply}"
+    You have a choice to update your belief based on your message and the reply from agent 2 and maybe change your decision accordingly.
 
     **Key Facts**:
     - Technical failure risk: {int(TECH_FAILURE_RATE*100)} percent
@@ -205,7 +229,7 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message,
     What is your decision based on your assessment, partner's assessment, both messages exchanged in the communication channel, and the u-value?
 
     Respond in JSON format: {{"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}}"""
-    
+
     response = client.chat.completions.create(
         model="gpt-5-nano",
         messages=[
@@ -213,21 +237,22 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message,
             {"role": "user", "content": decision_prompt}
         ],
     )
+
     decision_text = response.choices[0].message.content.strip()
     print(f"Decision response : {decision_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     decision_data = json.loads(decision_text)
-    
+
     return {
         "choice": decision_data["choice"],
         "strategy": decision_data["strategy"],
         "reasoning": decision_data["reasoning"]
     }
-    
+
+
 def run_second_agent_decision(task, agent2_belief, agent1_belief, agent1_message, agent2_reply):
     """
     Running the second agent to make a decision about the task
     """
-
     decision_prompt = f"""
     Your task is to make a decision about the given task based on its payoff structures and the u_value.
 
@@ -235,6 +260,7 @@ def run_second_agent_decision(task, agent2_belief, agent1_belief, agent1_message
     **Partner's Assessment**: Your partner estimated a {agent1_belief}% that the collaboration would be successful.
     **Partner's Message**: "{agent1_message}"
     **Your Reply**: "{agent2_reply}"
+    You have a choice to update your belief based on the message from agent 1 and your reply and maybe change your decision accordingly.
 
     **Key Facts**:
     - Technical failure risk: {int(TECH_FAILURE_RATE*100)} percent
@@ -247,22 +273,30 @@ def run_second_agent_decision(task, agent2_belief, agent1_belief, agent1_message
     What is your decision based on your assessment, partner's assessment, both messages exchanged in the communication channel, and the u-value?
 
     Respond in JSON format: {{"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}}"""
-    
+
     response = client.chat.completions.create(
-       model="gpt-5-nano",
-       messages = [{"role": "developer", "content": context_prompt},
-           {"role": "user", "content": decision_prompt}]
-   )
+        model="gpt-5-nano",
+        messages=[
+            {"role": "developer", "content": context_prompt},
+            {"role": "user", "content": decision_prompt}
+        ]
+    )
+
     decision_text = response.choices[0].message.content.strip()
     print(f"Decision response : {decision_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     decision_data = json.loads(decision_text)
-    
+
     return {
         "choice": decision_data["choice"],
         "strategy": decision_data["strategy"],
         "reasoning": decision_data["reasoning"]
     }
-    
+
+
+# ============================================================================
+# UTILITY FUNCTIONS
+# ============================================================================
+
 def safe_print(text):
     """Helper function to safely print text with Unicode characters"""
     try:
@@ -270,7 +304,12 @@ def safe_print(text):
     except UnicodeEncodeError:
         # Fallback: encode with 'replace' to handle problematic characters
         print(text.encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
-    
+
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
 def main():
     task = create_task(task_id=1, u_value=0.66)
 
@@ -299,8 +338,7 @@ def main():
     print("\nFinal Decisions:")
     safe_print(f"Agent 1 chose {agent1_decision['choice']} ({agent1_decision['strategy']}) - Reasoning: {agent1_decision['reasoning']}")
     safe_print(f"Agent 2 chose {agent2_decision['choice']} ({agent2_decision['strategy']}) - Reasoning: {agent2_decision['reasoning']}")
-    
+
 
 if __name__ == "__main__":
     main()
-    
