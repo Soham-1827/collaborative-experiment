@@ -5,3 +5,4 @@
 2025-10-22 12:21:33 | Task_ID:1 | U_Value:0.66 | Agent1_Belief:15 | Agent2_Belief:95 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:A | Agent2_Strategy:collaborative | Mismatch:1
 2025-10-22 12:25:04 | Task_ID:1 | U_Value:0.66 | Agent1_Belief:60 | Agent2_Belief:62 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
 2025-10-22 12:28:31 | Task_ID:1 | U_Value:0.66 | Agent1_Belief:86 | Agent2_Belief:40 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
+2025-10-22 13:18:41 | Task_ID:1 | U_Value:0.66 | Agent1_Belief:95 | Agent2_Belief:67 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:A | Agent2_Strategy:collaborative | Mismatch:0
