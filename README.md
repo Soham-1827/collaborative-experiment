@@ -135,7 +135,7 @@ from datetime import datetime
 - 🔄 Three exchanges experiments: In progress
 
 ## Future Work
-
+-Next we will work on showing updated belief for agent 1 and also ask agent 1 to predict the belief for agent 2 based on the exchange, hopefully this will help us understand more about it.
 - Analyze correlation between number of exchanges and mismatch rates
 - Study how belief differences affect final decisions
 - Investigate negotiation patterns in agent communication
@@ -148,3 +148,4 @@ from datetime import datetime
 - Results are timestamped for temporal analysis
 - The system preserves full conversation history for qualitative analysis
 - Agents do not have access to u-value during belief formation (only during decision making)
+
