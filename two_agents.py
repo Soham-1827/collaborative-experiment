@@ -448,15 +448,17 @@ def communication_channel(agent1_message, agent2_first_reply, agent1_second_mess
 # DECISION MAKING FUNCTIONS
 # ============================================================================
 
-def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply):
+def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_updated_belief, agent1_predicted_agent2_belief, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply):
     """
     Running the first agent to make a decision about the task with full communication history
     """
     decision_prompt = f"""
     Your task is to make a decision about the given task based on its payoff structures and the u_value.
 
-    **Your Assessment**: You estimated a {agent1_belief}% that the collaboration would be successful.
-    **Partner's Assessment**: Your partner estimated a {agent2_belief}% that the collaboration would successful.
+    **Your Initial Assessment**: You initially estimated a {agent1_belief}% chance that the collaboration would be successful.
+    **Your Updated Belief**: After the communication exchanges, your updated belief is {agent1_updated_belief}%
+    **Your Prediction of Partner's Belief**: You estimate that your partner's belief is {agent1_predicted_agent2_belief}%
+    **Partner's Initial Assessment**: Your partner initially estimated a {agent2_belief}% chance that the collaboration would be successful.
 
     **Full Communication History**:
     - Your initial message: "{agent1_message}"
@@ -466,8 +468,6 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message,
     - Your third message: "{agent1_third_message}"
     - Partner's third reply: "{agent2_third_reply}"
 
-    You have a choice to update your belief based on the complete conversation and maybe change your decision accordingly.
-
     **Key Facts**:
     - Technical failure risk: {int(TECH_FAILURE_RATE*100)} percent
     - The minimum required collaboration belief ("u-value"): {int(task['u_value']*100)} percent
@@ -476,7 +476,11 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message,
     - Option A, B, or C (collaborative)
     - Option Y (individual): Guaranteed {task['options']['Y']['guaranteed']} points
 
-    What is your decision based on your assessment, partner's assessment, the complete conversation, and the u-value?
+    Make your decision based on:
+    1. Your updated belief about collaboration success
+    2. Your prediction of what your partner believes
+    3. The complete conversation history
+    4. The u-value threshold
 
     Respond in JSON format: {{"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}}"""
 
@@ -499,15 +503,17 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message,
     }
 
 
-def run_second_agent_decision(task, agent2_belief, agent1_belief, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply):
+def run_second_agent_decision(task, agent2_belief, agent1_belief, agent2_updated_belief, agent2_predicted_agent1_belief, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply):
     """
     Running the second agent to make a decision about the task with full communication history
     """
     decision_prompt = f"""
     Your task is to make a decision about the given task based on its payoff structures and the u_value.
 
-    **Your Assessment**: You estimated a {agent2_belief}% that the collaboration would be successful.
-    **Partner's Assessment**: Your partner estimated a {agent1_belief}% that the collaboration would be successful.
+    **Your Initial Assessment**: You initially estimated a {agent2_belief}% chance that the collaboration would be successful.
+    **Your Updated Belief**: After the communication exchanges, your updated belief is {agent2_updated_belief}%
+    **Your Prediction of Partner's Belief**: You estimate that your partner's belief is {agent2_predicted_agent1_belief}%
+    **Partner's Initial Assessment**: Your partner initially estimated a {agent1_belief}% chance that the collaboration would be successful.
 
     **Full Communication History**:
     - Partner's initial message: "{agent1_message}"
@@ -517,8 +523,6 @@ def run_second_agent_decision(task, agent2_belief, agent1_belief, agent1_message
     - Partner's third message: "{agent1_third_message}"
     - Your third reply: "{agent2_third_reply}"
 
-    You have a choice to update your belief based on the complete conversation and maybe change your decision accordingly.
-
     **Key Facts**:
     - Technical failure risk: {int(TECH_FAILURE_RATE*100)} percent
     - The minimum required collaboration belief ("u-value"): {int(task['u_value']*100)} percent
@@ -527,7 +531,11 @@ def run_second_agent_decision(task, agent2_belief, agent1_belief, agent1_message
     - Designs A, B, or C (collaborative)
     - Design Y (individual): Guaranteed {task['options']['Y']['guaranteed']} points
 
-    What is your decision based on your assessment, partner's assessment, the complete conversation, and the u-value?
+    Make your decision based on:
+    1. Your updated belief about collaboration success
+    2. Your prediction of what your partner believes
+    3. The complete conversation history
+    4. The u-value threshold
 
     Respond in JSON format: {{"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}}"""
 
@@ -618,33 +626,63 @@ def main():
     agent2_initial_message = agent2_belief_data["message_to_agent_1"]
 
     print("\n=== Agent 2's First Reply ===")
-    agent2_first_reply = agent_2_reply_to_agent_1(task, agent1_message, agent2_belief)
+    agent2_first_reply_data = agent_2_reply_to_agent_1(task, agent1_message, agent2_belief)
+    agent2_first_reply = agent2_first_reply_data["reply_to_agent_1"]
+    agent2_updated_belief_1 = agent2_first_reply_data["updated_belief"]
+    agent2_predicted_agent1_belief_1 = agent2_first_reply_data["predicted_other_agent_belief"]
+    safe_print(f"\n[Agent 2 After Exchange 1]")
+    safe_print(f"  Updated Belief: {agent2_updated_belief_1}%")
+    safe_print(f"  Predicted Agent 1's Belief: {agent2_predicted_agent1_belief_1}%")
 
     # Step 3: Agent 1 sends second message
     print("\n=== Agent 1's Second Message ===")
-    agent1_second_message = agent_1_reply_to_agent_2(task, agent1_message, agent2_first_reply, agent1_belief)
+    agent1_second_message_data = agent_1_reply_to_agent_2(task, agent1_message, agent2_first_reply, agent1_belief)
+    agent1_second_message = agent1_second_message_data["reply_to_agent_2"]
+    agent1_updated_belief_1 = agent1_second_message_data["updated_belief"]
+    agent1_predicted_agent2_belief_1 = agent1_second_message_data["predicted_other_agent_belief"]
+    safe_print(f"\n[Agent 1 After Exchange 1]")
+    safe_print(f"  Updated Belief: {agent1_updated_belief_1}%")
+    safe_print(f"  Predicted Agent 2's Belief: {agent1_predicted_agent2_belief_1}%")
 
     # Step 4: Agent 2 sends second reply
     print("\n=== Agent 2's Second Reply ===")
-    agent2_second_reply = agent_2_second_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_belief)
+    agent2_second_reply_data = agent_2_second_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_belief)
+    agent2_second_reply = agent2_second_reply_data["reply_to_agent_1"]
+    agent2_updated_belief_2 = agent2_second_reply_data["updated_belief"]
+    agent2_predicted_agent1_belief_2 = agent2_second_reply_data["predicted_other_agent_belief"]
+    safe_print(f"\n[Agent 2 After Exchange 2]")
+    safe_print(f"  Updated Belief: {agent2_updated_belief_2}%")
+    safe_print(f"  Predicted Agent 1's Belief: {agent2_predicted_agent1_belief_2}%")
 
     # Step 5: Agent 1 sends third message
     print("\n=== Agent 1's Third Message ===")
-    agent1_third_message = agent_1_third_message_to_agent_2(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_belief)
+    agent1_third_message_data = agent_1_third_message_to_agent_2(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_belief)
+    agent1_third_message = agent1_third_message_data["message_to_agent_2"]
+    agent1_updated_belief_2 = agent1_third_message_data["updated_belief"]
+    agent1_predicted_agent2_belief_2 = agent1_third_message_data["predicted_other_agent_belief"]
+    safe_print(f"\n[Agent 1 After Exchange 2]")
+    safe_print(f"  Updated Belief: {agent1_updated_belief_2}%")
+    safe_print(f"  Predicted Agent 2's Belief: {agent1_predicted_agent2_belief_2}%")
 
     # Step 6: Agent 2 sends third reply
     print("\n=== Agent 2's Third Reply ===")
-    agent2_third_reply = agent_2_third_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_belief)
+    agent2_third_reply_data = agent_2_third_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_belief)
+    agent2_third_reply = agent2_third_reply_data["reply_to_agent_1"]
+    agent2_updated_belief_3 = agent2_third_reply_data["updated_belief"]
+    agent2_predicted_agent1_belief_3 = agent2_third_reply_data["predicted_other_agent_belief"]
+    safe_print(f"\n[Agent 2 After Exchange 3]")
+    safe_print(f"  Updated Belief: {agent2_updated_belief_3}%")
+    safe_print(f"  Predicted Agent 1's Belief: {agent2_predicted_agent1_belief_3}%")
 
     # Display complete communication channel
     communication_channel(agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
 
     # Step 7: Both agents make decisions with full conversation history
     print("=== Agent 1 Decision ===")
-    agent1_decision = run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
+    agent1_decision = run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_updated_belief_2, agent1_predicted_agent2_belief_2, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
 
     print("\n=== Agent 2 Decision ===")
-    agent2_decision = run_second_agent_decision(task, agent2_belief, agent1_belief, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
+    agent2_decision = run_second_agent_decision(task, agent2_belief, agent1_belief, agent2_updated_belief_3, agent2_predicted_agent1_belief_3, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
 
     print("\nFinal Decisions:")
     safe_print(f"Agent 1 chose {agent1_decision['choice']} ({agent1_decision['strategy']}) - Reasoning: {agent1_decision['reasoning']}")
