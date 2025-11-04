@@ -227,8 +227,13 @@ def agent_1_reply_to_agent_2(task, agent_1_message, agent_2_reply, agent_1_belie
     - Consider what you said before and what Agent 2 responded
     - You can negotiate further, adjust your stance, or respond based on your analysis
 
+    After seeing Agent 2's reply, also provide:
+    1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+    2. Your PREDICTION (0-100) of what you think Agent 2's belief is about successful collaboration
+       (This prediction will NOT be shared with Agent 2)
+
     Respond in JSON format:
-    {{"reply_to_agent_2": "your one line reply message to agent 2"}}
+    {{"reply_to_agent_2": "your one line reply message to agent 2", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}}
     """
 
     response = client.chat.completions.create(
@@ -243,7 +248,11 @@ def agent_1_reply_to_agent_2(task, agent_1_message, agent_2_reply, agent_1_belie
     print(f"Reply response : {reply_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     reply_data = json.loads(reply_text)
 
-    return reply_data["reply_to_agent_2"]
+    return {
+        "reply_to_agent_2": reply_data["reply_to_agent_2"],
+        "updated_belief": reply_data["updated_belief"],
+        "predicted_other_agent_belief": reply_data["predicted_other_agent_belief"]
+    }
 
 
 def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, agent_1_reply, agent_2_belief):
