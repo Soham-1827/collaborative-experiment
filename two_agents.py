@@ -156,7 +156,7 @@ def agent_2_reply_to_agent_1(task, agent_1_message, agent_2_belief):
     "{agent_1_message}"
 
     Context for your reply:
-    - Your own assessment: You estimated a {agent_2_belief}% chance that collaboration would be successful
+    - Your initial assessment: You estimated a {agent_2_belief}% chance that collaboration would be successful
     - Task options available:
       * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
       * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
@@ -172,8 +172,13 @@ def agent_2_reply_to_agent_1(task, agent_1_message, agent_2_belief):
     - Communicate whether you want to collaborate or not
     - You can negotiate, convince, or respond based on your analysis
 
+    After seeing Agent 1's message, also provide:
+    1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+    2. Your PREDICTION (0-100) of what you think Agent 1's belief is about successful collaboration
+       (This prediction will NOT be shared with Agent 1)
+
     Respond in JSON format:
-    {{"reply_to_agent_1": "your one line reply message to agent 1"}}
+    {{"reply_to_agent_1": "your one line reply message to agent 1", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}}
     """
 
     response = client.chat.completions.create(
@@ -188,7 +193,11 @@ def agent_2_reply_to_agent_1(task, agent_1_message, agent_2_belief):
     print(f"Reply response : {reply_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     reply_data = json.loads(reply_text)
 
-    return reply_data["reply_to_agent_1"]
+    return {
+        "reply_to_agent_1": reply_data["reply_to_agent_1"],
+        "updated_belief": reply_data["updated_belief"],
+        "predicted_other_agent_belief": reply_data["predicted_other_agent_belief"]
+    }
 
 
 def agent_1_reply_to_agent_2(task, agent_1_message, agent_2_reply, agent_1_belief):
@@ -388,10 +397,13 @@ def communication_channel(agent1_message, agent2_first_reply, agent1_second_mess
     safe_print("\n=== COMMUNICATION CHANNEL ===")
     safe_print(f"Agent 1's initial message: {agent1_message}")
     safe_print(f"Agent 2's first reply: {agent2_first_reply}")
+    
     safe_print(f"Agent 1's second message: {agent1_second_message}")
     safe_print(f"Agent 2's second reply: {agent2_second_reply}")
+    
     safe_print(f"Agent 1's third message: {agent1_third_message}")
     safe_print(f"Agent 2's third reply: {agent2_third_reply}")
+    
     safe_print("Both agents can now see this complete message exchange before making their decisions.")
     safe_print("===============================\n")
 
