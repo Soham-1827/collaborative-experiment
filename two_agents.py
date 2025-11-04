@@ -267,7 +267,7 @@ def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, 
     Agent 1's follow-up: "{agent_1_reply}"
 
     Context for your reply:
-    - Your own assessment: You estimated a {agent_2_belief}% chance that collaboration would be successful
+    - Your current belief: You currently believe there is a {agent_2_belief}% chance that collaboration would be successful
     - Task options available:
       * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
       * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
@@ -324,7 +324,7 @@ def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply,
     Agent 2's second reply: "{agent_2_second_reply}"
 
     Context for your reply:
-    - Your own assessment: You estimated a {agent_1_belief}% chance that collaboration would be successful
+    - Your current belief: You currently believe there is a {agent_1_belief}% chance that collaboration would be successful
     - Task options available:
       * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
       * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
@@ -382,7 +382,7 @@ def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, a
     Agent 1's third message: "{agent_1_third_message}"
 
     Context for your reply:
-    - Your own assessment: You estimated a {agent_2_belief}% chance that collaboration would be successful
+    - Your current belief: You currently believe there is a {agent_2_belief}% chance that collaboration would be successful
     - Task options available:
       * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
       * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
@@ -644,9 +644,9 @@ def main():
     safe_print(f"  Updated Belief: {agent1_updated_belief_1}%")
     safe_print(f"  Predicted Agent 2's Belief: {agent1_predicted_agent2_belief_1}%")
 
-    # Step 4: Agent 2 sends second reply
+    # Step 4: Agent 2 sends second reply (using updated belief from first exchange)
     print("\n=== Agent 2's Second Reply ===")
-    agent2_second_reply_data = agent_2_second_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_belief)
+    agent2_second_reply_data = agent_2_second_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_updated_belief_1)
     agent2_second_reply = agent2_second_reply_data["reply_to_agent_1"]
     agent2_updated_belief_2 = agent2_second_reply_data["updated_belief"]
     agent2_predicted_agent1_belief_2 = agent2_second_reply_data["predicted_other_agent_belief"]
@@ -654,9 +654,9 @@ def main():
     safe_print(f"  Updated Belief: {agent2_updated_belief_2}%")
     safe_print(f"  Predicted Agent 1's Belief: {agent2_predicted_agent1_belief_2}%")
 
-    # Step 5: Agent 1 sends third message
+    # Step 5: Agent 1 sends third message (using updated belief from first exchange)
     print("\n=== Agent 1's Third Message ===")
-    agent1_third_message_data = agent_1_third_message_to_agent_2(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_belief)
+    agent1_third_message_data = agent_1_third_message_to_agent_2(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_updated_belief_1)
     agent1_third_message = agent1_third_message_data["message_to_agent_2"]
     agent1_updated_belief_2 = agent1_third_message_data["updated_belief"]
     agent1_predicted_agent2_belief_2 = agent1_third_message_data["predicted_other_agent_belief"]
@@ -664,9 +664,9 @@ def main():
     safe_print(f"  Updated Belief: {agent1_updated_belief_2}%")
     safe_print(f"  Predicted Agent 2's Belief: {agent1_predicted_agent2_belief_2}%")
 
-    # Step 6: Agent 2 sends third reply
+    # Step 6: Agent 2 sends third reply (using updated belief from second exchange)
     print("\n=== Agent 2's Third Reply ===")
-    agent2_third_reply_data = agent_2_third_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_belief)
+    agent2_third_reply_data = agent_2_third_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_updated_belief_2)
     agent2_third_reply = agent2_third_reply_data["reply_to_agent_1"]
     agent2_updated_belief_3 = agent2_third_reply_data["updated_belief"]
     agent2_predicted_agent1_belief_3 = agent2_third_reply_data["predicted_other_agent_belief"]
