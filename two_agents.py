@@ -340,8 +340,13 @@ def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply,
     - Consider the full conversation history
     - You can make a final push, compromise, or solidify your stance
 
+    After seeing Agent 2's second reply, also provide:
+    1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+    2. Your PREDICTION (0-100) of what you think Agent 2's belief is about successful collaboration
+       (This prediction will NOT be shared with Agent 2)
+
     Respond in JSON format:
-    {{"message_to_agent_2": "your one line message to agent 2"}}
+    {{"message_to_agent_2": "your one line message to agent 2", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}}
     """
 
     response = client.chat.completions.create(
@@ -356,7 +361,11 @@ def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply,
     print(f"Reply response : {reply_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     reply_data = json.loads(reply_text)
 
-    return reply_data["message_to_agent_2"]
+    return {
+        "message_to_agent_2": reply_data["message_to_agent_2"],
+        "updated_belief": reply_data["updated_belief"],
+        "predicted_other_agent_belief": reply_data["predicted_other_agent_belief"]
+    }
 
 
 def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, agent_1_second_message, agent_2_second_reply, agent_1_third_message, agent_2_belief):
@@ -389,8 +398,13 @@ def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, a
     - Consider the complete conversation history
     - This is your final message before decision time, so make it count
 
+    After seeing Agent 1's third message, also provide:
+    1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+    2. Your PREDICTION (0-100) of what you think Agent 1's belief is about successful collaboration
+       (This prediction will NOT be shared with Agent 1)
+
     Respond in JSON format:
-    {{"reply_to_agent_1": "your one line reply message to agent 1"}}
+    {{"reply_to_agent_1": "your one line reply message to agent 1", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}}
     """
 
     response = client.chat.completions.create(
@@ -405,7 +419,11 @@ def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, a
     print(f"Reply response : {reply_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
     reply_data = json.loads(reply_text)
 
-    return reply_data["reply_to_agent_1"]
+    return {
+        "reply_to_agent_1": reply_data["reply_to_agent_1"],
+        "updated_belief": reply_data["updated_belief"],
+        "predicted_other_agent_belief": reply_data["predicted_other_agent_belief"]
+    }
 
 
 def communication_channel(agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply):
