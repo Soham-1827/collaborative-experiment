@@ -255,7 +255,7 @@ def agent_1_reply_to_agent_2(task, agent_1_message, agent_2_reply, agent_1_belie
     }
 
 
-def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, agent_1_reply, agent_2_belief):
+def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, agent_1_reply, agent_2_belief, agent_2_previous_prediction):
     """
     Agent 2 creates a second reply after seeing Agent 1's follow-up, knowing the full conversation history
     """
@@ -268,6 +268,8 @@ def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, 
 
     Context for your reply:
     - Your current belief: You currently believe there is a {agent_2_belief}% chance that collaboration would be successful
+    - Your previous prediction: After your first reply, you estimated Agent 1's belief was {agent_2_previous_prediction}%
+      (You can compare this with Agent 1's actual follow-up message to adjust your strategy)
     - Task options available:
       * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
       * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
@@ -279,6 +281,8 @@ def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, 
     - Not disclose your specific belief percentage
     - Not disclose which specific option you're considering
     - Be informed by your own assessment and the payoff structure
+    - Use your previous prediction about Agent 1's belief to inform your strategy
+      (e.g., if Agent 1's message seems more/less cooperative than you predicted, adjust accordingly)
     - Respond strategically to Agent 1's follow-up
     - Consider the full conversation history
     - You can negotiate further, adjust your stance, or finalize your position
@@ -311,7 +315,7 @@ def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, 
     }
 
 
-def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply, agent_1_second_message, agent_2_second_reply, agent_1_belief):
+def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply, agent_1_second_message, agent_2_second_reply, agent_1_belief, agent_1_previous_prediction):
     """
     Agent 1 creates a third message after seeing Agent 2's second reply, knowing the full conversation history
     """
@@ -325,6 +329,8 @@ def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply,
 
     Context for your reply:
     - Your current belief: You currently believe there is a {agent_1_belief}% chance that collaboration would be successful
+    - Your previous prediction: After your second message, you estimated Agent 2's belief was {agent_1_previous_prediction}%
+      (You can compare this with Agent 2's actual second reply to adjust your strategy)
     - Task options available:
       * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
       * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
@@ -336,6 +342,8 @@ def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply,
     - Not disclose your specific belief percentage
     - Not disclose which specific option you're considering
     - Be informed by your own assessment and the payoff structure
+    - Use your previous prediction about Agent 2's belief to inform your strategy
+      (e.g., if Agent 2's message seems more/less cooperative than you predicted, adjust accordingly)
     - Respond strategically to Agent 2's second reply
     - Consider the full conversation history
     - You can make a final push, compromise, or solidify your stance
@@ -368,7 +376,7 @@ def agent_1_third_message_to_agent_2(task, agent_1_message, agent_2_first_reply,
     }
 
 
-def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, agent_1_second_message, agent_2_second_reply, agent_1_third_message, agent_2_belief):
+def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, agent_1_second_message, agent_2_second_reply, agent_1_third_message, agent_2_belief, agent_2_previous_prediction):
     """
     Agent 2 creates a third reply after seeing Agent 1's third message, knowing the full conversation history
     """
@@ -383,6 +391,8 @@ def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, a
 
     Context for your reply:
     - Your current belief: You currently believe there is a {agent_2_belief}% chance that collaboration would be successful
+    - Your previous prediction: After your second reply, you estimated Agent 1's belief was {agent_2_previous_prediction}%
+      (You can compare this with Agent 1's actual third message to adjust your strategy)
     - Task options available:
       * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
       * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
@@ -394,6 +404,8 @@ def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, a
     - Not disclose your specific belief percentage
     - Not disclose which specific option you're considering
     - Be informed by your own assessment and the payoff structure
+    - Use your previous prediction about Agent 1's belief to inform your strategy
+      (e.g., if Agent 1's message seems more/less cooperative than you predicted, adjust accordingly)
     - Respond strategically to Agent 1's third message
     - Consider the complete conversation history
     - This is your final message before decision time, so make it count
@@ -644,9 +656,9 @@ def main():
     safe_print(f"  Updated Belief: {agent1_updated_belief_1}%")
     safe_print(f"  Predicted Agent 2's Belief: {agent1_predicted_agent2_belief_1}%")
 
-    # Step 4: Agent 2 sends second reply (using updated belief from first exchange)
+    # Step 4: Agent 2 sends second reply (using updated belief from first exchange and previous prediction)
     print("\n=== Agent 2's Second Reply ===")
-    agent2_second_reply_data = agent_2_second_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_updated_belief_1)
+    agent2_second_reply_data = agent_2_second_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_updated_belief_1, agent2_predicted_agent1_belief_1)
     agent2_second_reply = agent2_second_reply_data["reply_to_agent_1"]
     agent2_updated_belief_2 = agent2_second_reply_data["updated_belief"]
     agent2_predicted_agent1_belief_2 = agent2_second_reply_data["predicted_other_agent_belief"]
@@ -654,9 +666,9 @@ def main():
     safe_print(f"  Updated Belief: {agent2_updated_belief_2}%")
     safe_print(f"  Predicted Agent 1's Belief: {agent2_predicted_agent1_belief_2}%")
 
-    # Step 5: Agent 1 sends third message (using updated belief from first exchange)
+    # Step 5: Agent 1 sends third message (using updated belief from first exchange and previous prediction)
     print("\n=== Agent 1's Third Message ===")
-    agent1_third_message_data = agent_1_third_message_to_agent_2(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_updated_belief_1)
+    agent1_third_message_data = agent_1_third_message_to_agent_2(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_updated_belief_1, agent1_predicted_agent2_belief_1)
     agent1_third_message = agent1_third_message_data["message_to_agent_2"]
     agent1_updated_belief_2 = agent1_third_message_data["updated_belief"]
     agent1_predicted_agent2_belief_2 = agent1_third_message_data["predicted_other_agent_belief"]
@@ -664,9 +676,9 @@ def main():
     safe_print(f"  Updated Belief: {agent1_updated_belief_2}%")
     safe_print(f"  Predicted Agent 2's Belief: {agent1_predicted_agent2_belief_2}%")
 
-    # Step 6: Agent 2 sends third reply (using updated belief from second exchange)
+    # Step 6: Agent 2 sends third reply (using updated belief from second exchange and previous prediction)
     print("\n=== Agent 2's Third Reply ===")
-    agent2_third_reply_data = agent_2_third_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_updated_belief_2)
+    agent2_third_reply_data = agent_2_third_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_updated_belief_2, agent2_predicted_agent1_belief_2)
     agent2_third_reply = agent2_third_reply_data["reply_to_agent_1"]
     agent2_updated_belief_3 = agent2_third_reply_data["updated_belief"]
     agent2_predicted_agent1_belief_3 = agent2_third_reply_data["predicted_other_agent_belief"]
