@@ -70,23 +70,35 @@ def create_visualizations(aggregated_data):
     # Sort u-values
     u_values = sorted(aggregated_data.keys())
 
-    # Calculate percentages
+    # Calculate percentages and counts
     mismatch_rates = []
     collaborative_rates = []
     individual_rates = []
     mixed_rates = []
 
+    mismatch_counts = []
+    collaborative_counts = []
+    individual_counts = []
+    mixed_counts = []
+
     for u_val in u_values:
         data = aggregated_data[u_val]
         total = data['total']
 
+        # Percentages
         mismatch_rates.append((data['mismatches'] / total) * 100 if total > 0 else 0)
         collaborative_rates.append((data['both_collaborative'] / total) * 100 if total > 0 else 0)
         individual_rates.append((data['both_individual'] / total) * 100 if total > 0 else 0)
         mixed_rates.append((data['mixed'] / total) * 100 if total > 0 else 0)
 
-    # Create figure with 2 subplots
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+        # Counts
+        mismatch_counts.append(data['mismatches'])
+        collaborative_counts.append(data['both_collaborative'])
+        individual_counts.append(data['both_individual'])
+        mixed_counts.append(data['mixed'])
+
+    # Create figure with 4 subplots (2x2)
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 12))
 
     # Graph 1: Mismatch Rate vs U-Value
     ax1.plot(u_values, mismatch_rates, marker='o', linewidth=2, markersize=8, color='red')
@@ -101,7 +113,7 @@ def create_visualizations(aggregated_data):
         ax1.annotate(f'{rate:.1f}%', (u, rate), textcoords="offset points",
                     xytext=(0,10), ha='center', fontsize=9)
 
-    # Graph 2: Strategy Distribution vs U-Value
+    # Graph 2: Strategy Distribution vs U-Value (Percentage)
     x_pos = range(len(u_values))
     width = 0.25
 
@@ -114,12 +126,40 @@ def create_visualizations(aggregated_data):
 
     ax2.set_xlabel('U-Value (Collaboration Threshold)', fontsize=12, fontweight='bold')
     ax2.set_ylabel('Percentage (%)', fontsize=12, fontweight='bold')
-    ax2.set_title('Strategy Choices vs U-Value', fontsize=14, fontweight='bold')
+    ax2.set_title('Strategy Choices vs U-Value (Percentage)', fontsize=14, fontweight='bold')
     ax2.set_xticks(x_pos)
     ax2.set_xticklabels([f'{u:.2f}' for u in u_values])
     ax2.legend()
     ax2.grid(True, alpha=0.3, axis='y')
     ax2.set_ylim(0, 105)
+
+    # Graph 3: Mismatch Frequency vs U-Value
+    ax3.plot(u_values, mismatch_counts, marker='o', linewidth=2, markersize=8, color='red')
+    ax3.set_xlabel('U-Value (Collaboration Threshold)', fontsize=12, fontweight='bold')
+    ax3.set_ylabel('Mismatch Count (Frequency)', fontsize=12, fontweight='bold')
+    ax3.set_title('Strategy Mismatch Frequency vs U-Value', fontsize=14, fontweight='bold')
+    ax3.grid(True, alpha=0.3)
+
+    # Add data labels
+    for i, (u, count) in enumerate(zip(u_values, mismatch_counts)):
+        ax3.annotate(f'{count}', (u, count), textcoords="offset points",
+                    xytext=(0,10), ha='center', fontsize=9)
+
+    # Graph 4: Strategy Distribution vs U-Value (Frequency)
+    ax4.bar([x - width for x in x_pos], collaborative_counts, width,
+            label='Both Collaborative', color='green', alpha=0.8)
+    ax4.bar(x_pos, individual_counts, width,
+            label='Both Individual', color='blue', alpha=0.8)
+    ax4.bar([x + width for x in x_pos], mixed_counts, width,
+            label='Mixed (Mismatch)', color='red', alpha=0.8)
+
+    ax4.set_xlabel('U-Value (Collaboration Threshold)', fontsize=12, fontweight='bold')
+    ax4.set_ylabel('Count (Frequency)', fontsize=12, fontweight='bold')
+    ax4.set_title('Strategy Choices vs U-Value (Frequency)', fontsize=14, fontweight='bold')
+    ax4.set_xticks(x_pos)
+    ax4.set_xticklabels([f'{u:.2f}' for u in u_values])
+    ax4.legend()
+    ax4.grid(True, alpha=0.3, axis='y')
 
     plt.tight_layout()
 
