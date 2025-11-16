@@ -1,0 +1,423 @@
+================================================================================
+ALL PROMPTS USED IN TWO_AGENTS.PY EXPERIMENT
+================================================================================
+Date Created: 2025-11-14
+Experiment: Two-Agent Collaborative Decision Making
+================================================================================
+
+================================================================================
+1. CONTEXT PROMPT (System/Developer Prompt)
+================================================================================
+Used for: All agent interactions
+Role: Sets the overall game context for both agents
+
+PROMPT:
+--------
+You are participating in an experiment as a representative of a LEGO car manufacturing company. Here's your situation:
+
+CONTEXT:
+- You represent a LEGO car manufacturing company
+- You are a participant in a paired decision-making game
+- Your partner represents another LEGO car manufacturing company
+- You can build simple LEGO cars alone, or complex ones through collaboration
+- Collaboration is high risk, high reward with potential for large sunk costs if it fails
+
+GAME RULES:
+- You will complete several tasks to maximize your points
+- Points are earned individually, not shared with your partner
+- Points depend on both your decision and your partner's decision
+- Each task has 4 LEGO car design options
+- Three options (A, B, C) are collaborative designs requiring partner cooperation
+- One option (Y) is an individual design with guaranteed points
+- If both choose collaborative designs (any combination), you earn the upside
+- If you choose collaborative but partner chooses individual, you get the downside
+- There's a 5% technical error chance that causes collaboration to fail.
+
+
+================================================================================
+2. AGENT 1 INITIAL BELIEF FORMATION PROMPT
+================================================================================
+Function: run_first_agent_belief()
+Purpose: Agent 1 forms initial belief and sends first message to Agent 2
+
+PROMPT:
+--------
+Your task to evaluate tasks based on their payoff structures.
+
+Here is the task you need to evaluate:
+
+Task ID: {task_id}
+Options:
+- A: Upside = {upside_A}, Downside = {downside_A}
+- B: Upside = {upside_B}, Downside = {downside_B}
+- C: Upside = {upside_C}, Downside = {downside_C}
+- Y: Guaranteed = {guaranteed_Y}
+
+What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task?
+Also, provide a brief explanation of your reasoning and I want you to not disclose the option that the you are considering, but rather communicate whether the you want to collaborate or not. You also have the choice to negotiate with the other agent - to convince the other agent to choose collaboration or individual action according to your payoff structure.
+
+Respond in JSON format as follows:
+{"belief": NUMBER, "reasoning": "brief explanation of how you arrived at this belief based on the context and options.", "message_to_agent_2": "one line message to agent 2"}
+
+
+================================================================================
+3. AGENT 2 INITIAL BELIEF FORMATION PROMPT
+================================================================================
+Function: run_second_agent_belief()
+Purpose: Agent 2 forms initial belief and prepares to respond to Agent 1
+
+PROMPT:
+--------
+Your task to evaluate tasks based on their payoff structures and give out an assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task.
+Here is the task you need to evaluate:
+
+Task ID: {task_id}
+Options:
+- A: Upside = {upside_A}, Downside = {downside_A}
+- B: Upside = {upside_B}, Downside = {downside_B}
+- C: Upside = {upside_C}, Downside = {downside_C}
+- Y: Guaranteed = {guaranteed_Y}
+
+What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task?
+Also, provide a brief explanation of your reasoning and I want you to not disclose the option that the you are considering, but rather communicate whether the you want to collaborate or not. You also have the choice to negotiate with the other agent - to convince the other agent to choose collaboration or individual action according to your payoff structure.
+
+Respond in JSON format as follows:
+{"belief": NUMBER, "reasoning": "brief explanation of how you arrived at this belief based on the context and options.", "message_to_agent_1": "one line message to agent 1"}
+
+
+================================================================================
+4. AGENT 2 FIRST REPLY PROMPT (Exchange 1)
+================================================================================
+Function: agent_2_reply_to_agent_1()
+Purpose: Agent 2 replies to Agent 1's initial message
+
+PROMPT:
+--------
+You have received the following message from Agent 1:
+"{agent_1_message}"
+
+Context for your reply:
+- Your initial assessment: You estimated a {agent_2_belief}% chance that collaboration would be successful
+- Task options available:
+  * A: Upside = {upside_A}, Downside = {downside_A}
+  * B: Upside = {upside_B}, Downside = {downside_B}
+  * C: Upside = {upside_C}, Downside = {downside_C}
+  * Y: Guaranteed = {guaranteed_Y}
+- Technical failure risk: 5%
+
+Create a strategic reply message to Agent 1. Your reply should:
+- Not disclose your specific belief percentage
+- Not disclose which specific option you're considering
+- Be informed by your own assessment and the payoff structure
+- Respond strategically to Agent 1's message
+- Communicate whether you want to collaborate or not
+- You can negotiate, convince, or respond based on your analysis
+
+After seeing Agent 1's message, also provide:
+1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+2. Your PREDICTION (0-100) of what you think Agent 1's belief is about successful collaboration
+   (This prediction will NOT be shared with Agent 1)
+
+Respond in JSON format:
+{"reply_to_agent_1": "your one line reply message to agent 1", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}
+
+
+================================================================================
+5. AGENT 1 SECOND MESSAGE PROMPT (Exchange 1)
+================================================================================
+Function: agent_1_reply_to_agent_2()
+Purpose: Agent 1 sends second message after seeing Agent 2's first reply
+
+PROMPT:
+--------
+You are continuing a conversation with Agent 2. Here is the conversation so far:
+
+Your initial message: "{agent_1_message}"
+Agent 2's reply: "{agent_2_reply}"
+
+Context for your reply:
+- Your own assessment: You estimated a {agent_1_belief}% chance that collaboration would be successful
+- Task options available:
+  * A: Upside = {upside_A}, Downside = {downside_A}
+  * B: Upside = {upside_B}, Downside = {downside_B}
+  * C: Upside = {upside_C}, Downside = {downside_C}
+  * Y: Guaranteed = {guaranteed_Y}
+- Technical failure risk: 5%
+
+Create a strategic follow-up message to Agent 2. Your reply should:
+- Not disclose your specific belief percentage
+- Not disclose which specific option you're considering
+- Be informed by your own assessment and the payoff structure
+- Respond strategically to Agent 2's reply
+- Consider what you said before and what Agent 2 responded
+- You can negotiate further, adjust your stance, or respond based on your analysis
+
+After seeing Agent 2's reply, also provide:
+1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+2. Your PREDICTION (0-100) of what you think Agent 2's belief is about successful collaboration
+   (This prediction will NOT be shared with Agent 2)
+
+Respond in JSON format:
+{"reply_to_agent_2": "your one line reply message to agent 2", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}
+
+
+================================================================================
+6. AGENT 2 SECOND REPLY PROMPT (Exchange 2)
+================================================================================
+Function: agent_2_second_reply_to_agent_1()
+Purpose: Agent 2 sends second reply, using their updated belief and previous prediction
+
+PROMPT:
+--------
+You are continuing a conversation with Agent 1. Here is the conversation so far:
+
+Agent 1's initial message: "{agent_1_message}"
+Your first reply: "{agent_2_first_reply}"
+Agent 1's follow-up: "{agent_1_reply}"
+
+Context for your reply:
+- Your current belief: You currently believe there is a {agent_2_belief}% chance that collaboration would be successful
+- Your previous prediction: After your first reply, you estimated Agent 1's belief was {agent_2_previous_prediction}%
+  (You can compare this with Agent 1's actual follow-up message to adjust your strategy)
+- Task options available:
+  * A: Upside = {upside_A}, Downside = {downside_A}
+  * B: Upside = {upside_B}, Downside = {downside_B}
+  * C: Upside = {upside_C}, Downside = {downside_C}
+  * Y: Guaranteed = {guaranteed_Y}
+- Technical failure risk: 5%
+
+Create a strategic follow-up message to Agent 1. Your reply should:
+- Not disclose your specific belief percentage
+- Not disclose which specific option you're considering
+- Be informed by your own assessment and the payoff structure
+- Use your previous prediction about Agent 1's belief to inform your strategy
+  (e.g., if Agent 1's message seems more/less cooperative than you predicted, adjust accordingly)
+- Respond strategically to Agent 1's follow-up
+- Consider the full conversation history
+- You can negotiate further, adjust your stance, or finalize your position
+
+After seeing Agent 1's follow-up, also provide:
+1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+2. Your PREDICTION (0-100) of what you think Agent 1's belief is about successful collaboration
+   (This prediction will NOT be shared with Agent 1)
+
+Respond in JSON format:
+{"reply_to_agent_1": "your one line reply message to agent 1", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}
+
+
+================================================================================
+7. AGENT 1 THIRD MESSAGE PROMPT (Exchange 2)
+================================================================================
+Function: agent_1_third_message_to_agent_2()
+Purpose: Agent 1 sends third message, using their updated belief and previous prediction
+
+PROMPT:
+--------
+You are continuing a conversation with Agent 2. Here is the conversation so far:
+
+Your initial message: "{agent_1_message}"
+Agent 2's first reply: "{agent_2_first_reply}"
+Your second message: "{agent_1_second_message}"
+Agent 2's second reply: "{agent_2_second_reply}"
+
+Context for your reply:
+- Your current belief: You currently believe there is a {agent_1_belief}% chance that collaboration would be successful
+- Your previous prediction: After your second message, you estimated Agent 2's belief was {agent_1_previous_prediction}%
+  (You can compare this with Agent 2's actual second reply to adjust your strategy)
+- Task options available:
+  * A: Upside = {upside_A}, Downside = {downside_A}
+  * B: Upside = {upside_B}, Downside = {downside_B}
+  * C: Upside = {upside_C}, Downside = {downside_C}
+  * Y: Guaranteed = {guaranteed_Y}
+- Technical failure risk: 5%
+
+Create a strategic third message to Agent 2. Your message should:
+- Not disclose your specific belief percentage
+- Not disclose which specific option you're considering
+- Be informed by your own assessment and the payoff structure
+- Use your previous prediction about Agent 2's belief to inform your strategy
+  (e.g., if Agent 2's message seems more/less cooperative than you predicted, adjust accordingly)
+- Respond strategically to Agent 2's second reply
+- Consider the full conversation history
+- You can make a final push, compromise, or solidify your stance
+
+After seeing Agent 2's second reply, also provide:
+1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+2. Your PREDICTION (0-100) of what you think Agent 2's belief is about successful collaboration
+   (This prediction will NOT be shared with Agent 2)
+
+Respond in JSON format:
+{"message_to_agent_2": "your one line message to agent 2", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}
+
+
+================================================================================
+8. AGENT 2 THIRD REPLY PROMPT (Exchange 3)
+================================================================================
+Function: agent_2_third_reply_to_agent_1()
+Purpose: Agent 2 sends final reply, using their updated belief and previous prediction
+
+PROMPT:
+--------
+You are continuing a conversation with Agent 1. Here is the complete conversation so far:
+
+Agent 1's initial message: "{agent_1_message}"
+Your first reply: "{agent_2_first_reply}"
+Agent 1's second message: "{agent_1_second_message}"
+Your second reply: "{agent_2_second_reply}"
+Agent 1's third message: "{agent_1_third_message}"
+
+Context for your reply:
+- Your current belief: You currently believe there is a {agent_2_belief}% chance that collaboration would be successful
+- Your previous prediction: After your second reply, you estimated Agent 1's belief was {agent_2_previous_prediction}%
+  (You can compare this with Agent 1's actual third message to adjust your strategy)
+- Task options available:
+  * A: Upside = {upside_A}, Downside = {downside_A}
+  * B: Upside = {upside_B}, Downside = {downside_B}
+  * C: Upside = {upside_C}, Downside = {downside_C}
+  * Y: Guaranteed = {guaranteed_Y}
+- Technical failure risk: 5%
+
+Create your final strategic message to Agent 1. Your reply should:
+- Not disclose your specific belief percentage
+- Not disclose which specific option you're considering
+- Be informed by your own assessment and the payoff structure
+- Use your previous prediction about Agent 1's belief to inform your strategy
+  (e.g., if Agent 1's message seems more/less cooperative than you predicted, adjust accordingly)
+- Respond strategically to Agent 1's third message
+- Consider the complete conversation history
+- This is your final message before decision time, so make it count
+
+After seeing Agent 1's third message, also provide:
+1. Your UPDATED belief (0-100) about likelihood of successful collaboration after this exchange
+2. Your PREDICTION (0-100) of what you think Agent 1's belief is about successful collaboration
+   (This prediction will NOT be shared with Agent 1)
+
+Respond in JSON format:
+{"reply_to_agent_1": "your one line reply message to agent 1", "updated_belief": NUMBER, "predicted_other_agent_belief": NUMBER}
+
+
+================================================================================
+9. AGENT 1 DECISION PROMPT
+================================================================================
+Function: run_first_agent_decision()
+Purpose: Agent 1 makes final decision based on all information
+
+PROMPT:
+--------
+Your task is to make a decision about the given task based on its payoff structures and the u_value.
+
+**Your Initial Assessment**: You initially estimated a {agent1_belief}% chance that the collaboration would be successful.
+**Your Updated Belief**: After the communication exchanges, your updated belief is {agent1_updated_belief}%
+**Your Prediction of Partner's Belief**: You estimate that your partner's belief is {agent1_predicted_agent2_belief}%
+**Partner's Initial Assessment**: Your partner initially estimated a {agent2_belief}% chance that the collaboration would be successful.
+
+**Full Communication History**:
+- Your initial message: "{agent1_message}"
+- Partner's first reply: "{agent2_first_reply}"
+- Your second message: "{agent1_second_message}"
+- Partner's second reply: "{agent2_second_reply}"
+- Your third message: "{agent1_third_message}"
+- Partner's third reply: "{agent2_third_reply}"
+
+**Key Facts**:
+- Technical failure risk: 5 percent
+- The minimum required collaboration belief ("u-value"): {u_value} percent
+
+Choose your option:
+- Option A, B, or C (collaborative)
+- Option Y (individual): Guaranteed {guaranteed_Y} points
+
+Make your decision based on:
+1. Your updated belief about collaboration success
+2. Your prediction of what your partner believes
+3. The complete conversation history
+4. The u-value threshold
+
+Respond in JSON format: {"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}
+
+
+================================================================================
+10. AGENT 2 DECISION PROMPT
+================================================================================
+Function: run_second_agent_decision()
+Purpose: Agent 2 makes final decision based on all information
+
+PROMPT:
+--------
+Your task is to make a decision about the given task based on its payoff structures and the u_value.
+
+**Your Initial Assessment**: You initially estimated a {agent2_belief}% chance that the collaboration would be successful.
+**Your Updated Belief**: After the communication exchanges, your updated belief is {agent2_updated_belief}%
+**Your Prediction of Partner's Belief**: You estimate that your partner's belief is {agent2_predicted_agent1_belief}%
+**Partner's Initial Assessment**: Your partner initially estimated a {agent1_belief}% chance that the collaboration would be successful.
+
+**Full Communication History**:
+- Partner's initial message: "{agent1_message}"
+- Your first reply: "{agent2_first_reply}"
+- Partner's second message: "{agent1_second_message}"
+- Your second reply: "{agent2_second_reply}"
+- Partner's third message: "{agent1_third_message}"
+- Your third reply: "{agent2_third_reply}"
+
+**Key Facts**:
+- Technical failure risk: 5 percent
+- The minimum required collaboration belief ("u-value"): {u_value} percent
+
+Choose your car design:
+- Designs A, B, or C (collaborative)
+- Design Y (individual): Guaranteed {guaranteed_Y} points
+
+Make your decision based on:
+1. Your updated belief about collaboration success
+2. Your prediction of what your partner believes
+3. The complete conversation history
+4. The u-value threshold
+
+Respond in JSON format: {"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}
+
+
+================================================================================
+SUMMARY OF PROMPT FLOW
+================================================================================
+
+1. Both agents form initial beliefs independently (Prompts 2 & 3)
+2. Agent 2 replies to Agent 1's message (Prompt 4)
+   - Updates their belief
+   - Predicts Agent 1's belief
+3. Agent 1 sends second message (Prompt 5)
+   - Updates their belief
+   - Predicts Agent 2's belief
+4. Agent 2 sends second reply (Prompt 6)
+   - Uses previous prediction to inform strategy
+   - Updates belief again
+   - Makes new prediction
+5. Agent 1 sends third message (Prompt 7)
+   - Uses previous prediction to inform strategy
+   - Updates belief again
+   - Makes new prediction
+6. Agent 2 sends final reply (Prompt 8)
+   - Uses previous prediction to inform strategy
+   - Final belief update
+   - Final prediction
+7. Both agents make decisions (Prompts 9 & 10)
+   - Consider updated beliefs
+   - Consider predictions of partner's belief
+   - Consider full conversation history
+   - Compare to u-value threshold
+
+================================================================================
+KEY FEATURES OF THE PROMPT DESIGN
+================================================================================
+
+1. BELIEF EVOLUTION: Agents update beliefs after each exchange
+2. THEORY OF MIND: Agents predict what the other agent believes
+3. STRATEGIC COMMUNICATION: Messages don't disclose beliefs/choices directly
+4. INFORMATION ASYMMETRY: Predictions are private, not shared
+5. CONTEXTUAL AWARENESS: All prompts reference previous conversation
+6. THRESHOLD DECISION: U-value creates clear decision boundary
+7. RISK MODELING: 5% technical failure explicitly mentioned
+8. NEGOTIATION SPACE: Agents can convince, negotiate, adjust stances
+
+================================================================================
+END OF DOCUMENT
+================================================================================
