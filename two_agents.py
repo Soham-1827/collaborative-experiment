@@ -4,6 +4,7 @@ Working with two agents
 import json
 import sys
 import random
+import os
 from openai import OpenAI
 from datetime import datetime
 
@@ -13,7 +14,12 @@ from datetime import datetime
 # ============================================================================
 
 RESULTS_FILE = "experiment_results_three_exchanges.txt"
-OpenAI_API_KEY = ""
+
+# Get OpenAI API key from environment variable
+OpenAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OpenAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY environment variable not set. Please set it before running the script.")
+
 client = OpenAI(api_key=OpenAI_API_KEY)
 
 context_prompt = """You are participating in an experiment as a representative of a LEGO car manufacturing company. Here's your situation:

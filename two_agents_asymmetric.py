@@ -4,6 +4,7 @@ Working with two agents
 import json
 import sys
 import random
+import os
 from openai import OpenAI
 from datetime import datetime
 
@@ -12,8 +13,13 @@ from datetime import datetime
 # CONSTANTS AND CONFIGURATION
 # ============================================================================
 
-RESULTS_FILE = "experiment_results_three_exchanges.txt"
-OpenAI_API_KEY = ""
+RESULTS_FILE = "experiment_results_asymmetric.txt"
+
+# Get OpenAI API key from environment variable
+OpenAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OpenAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY environment variable not set. Please set it before running the script.")
+
 client = OpenAI(api_key=OpenAI_API_KEY)
 
 context_prompt = """You are participating in an experiment as a representative of a LEGO car manufacturing company. Here's your situation:
@@ -528,6 +534,7 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_updated_
 
     decision_text = response.choices[0].message.content.strip()
     print(f"Decision response : {decision_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
+    decision_text = clean_json_response(decision_text)
     decision_data = json.loads(decision_text)
 
     return {
@@ -588,6 +595,7 @@ def run_second_agent_decision(task, agent2_belief, agent1_belief, agent2_updated
 
     decision_text = response.choices[0].message.content.strip()
     print(f"Decision response : {decision_text}".encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
+    decision_text = clean_json_response(decision_text)
     decision_data = json.loads(decision_text)
 
     return {
@@ -608,6 +616,22 @@ def safe_print(text):
     except UnicodeEncodeError:
         # Fallback: encode with 'replace' to handle problematic characters
         print(text.encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding))
+
+
+def clean_json_response(text):
+    """
+    Clean JSON response text by removing common problematic characters
+    that LLMs sometimes add at the end
+    """
+    text = text.strip()
+    # Remove trailing "> after closing brace or quote
+    if text.endswith('">'):
+        text = text[:-2] + '"'
+    elif text.endswith("'>"):
+        text = text[:-2] + "'"
+    elif text.endswith('}>'):
+        text = text[:-1]
+    return text
 
 
 def check_strategy_mismatch(agent1_strategy, agent2_strategy):
