@@ -7,7 +7,10 @@ import random
 import os
 from openai import OpenAI
 from datetime import datetime
+from dotenv import load_dotenv
 
+# Load environment variables from .env file
+load_dotenv()
 
 # ============================================================================
 # CONSTANTS AND CONFIGURATION
@@ -18,7 +21,7 @@ RESULTS_FILE = "experiment_results_asymmetric.txt"
 # Get OpenAI API key from environment variable
 OpenAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OpenAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY environment variable not set. Please set it before running the script.")
+    raise ValueError("OPENAI_API_KEY environment variable not set. Please set it in your .env file.")
 
 client = OpenAI(api_key=OpenAI_API_KEY)
 
