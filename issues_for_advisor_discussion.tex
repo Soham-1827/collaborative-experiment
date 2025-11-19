@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+\title{Collaborative AI Experiment: Issues for Discussion}
+\author{Discussion with Dr. Paul Grogan}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Code Implementation Issues}
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+
+\item \textbf{Data Loss Issue: Incomplete Data Capture}
+
+Currently, the results file only saves agents' \textit{initial} beliefs (from the first assessment), but discards all updated beliefs collected during the three communication exchanges and the predicted beliefs about the partner. This means we're losing critical data about belief evolution trajectories, the final beliefs that actually informed decisions, and the accuracy of agents' theory-of-mind predictions—all of which are central to understanding how communication affects coordination.
+
+\item \textbf{Inconsistent Belief Updates in Agent 1}
+
+Agent 1's third message (line 280) uses \texttt{agent1\_belief} (initial belief) instead of \texttt{agent1\_updated\_belief\_1} (belief after first exchange), creating temporal inconsistency where Agent 1 doesn't incorporate their own updated belief from the previous exchange. This is inconsistent with Agent 2's implementation, which correctly propagates updated beliefs forward through all exchanges, potentially biasing the communication dynamics asymmetrically.
+
+\item \textbf{Lack of Ground Truth for Successful Collaboration}
+
+The experiment measures coordination (strategy mismatch) but doesn't simulate actual collaboration outcomes—no points are calculated, no success/failure events occur, and no payoffs are realized. Without outcome data, we cannot answer whether communication leads to \textit{better outcomes} (higher expected value) or merely \textit{coordinated bad decisions} (both agents collaborating when rational analysis suggests they shouldn't), which limits our ability to assess the quality rather than just the alignment of decisions.
+
+\item \textbf{No Unique Trial ID}
+
+All experimental runs record \texttt{Task\_ID:1} with no unique identifier per trial, making it impossible to distinguish between different experimental runs or track which results came from the same experimental session. This prevents proper grouping for statistical analysis (e.g., mixed-effects models with trial as random effect) and makes data management error-prone when combining results from multiple experimental batches.
+
+\item \textbf{Repeated Code Duplication}
+
+The six communication functions (\texttt{agent\_2\_reply\_to\_agent\_1}, \texttt{agent\_1\_reply\_to\_agent\_2}, etc.) contain nearly identical code with only minor variations in conversation history and variable names, violating the DRY (Don't Repeat Yourself) principle. This duplication increases maintenance burden, makes systematic changes error-prone, and obscures the actual logic differences between communication rounds, suggesting these could be refactored into a single parameterized function.
+
+\item \textbf{Inconsistent Error Handling}
+
+JSON parsing from LLM responses has no error handling—if the model returns malformed JSON or unexpected formats, the program crashes without graceful recovery or logging. Robust error handling is essential for long experimental runs, as LLM outputs can occasionally be non-compliant even with careful prompting, and unhandled exceptions could invalidate hours of data collection.
+
+\item \textbf{No Temperature Setting}
+
+The API calls to the LLM have no temperature parameter specified, defaulting to the API's default value (typically 0.7-1.0), which introduces non-deterministic variation in responses. For experimental reproducibility and to control the degree of stochasticity in agent reasoning, we should explicitly set temperature (e.g., 0.1 for consistency or 0.7 for natural variation) and document this choice as a methodological decision.
+
+\item \textbf{No Sample Size Justification}
+
+The current experimental design runs 8 trials per condition with no power analysis or statistical justification for this sample size. Given the current results show small event counts (e.g., only 1-5 mismatches per condition in some cases), this sample size may be insufficient to detect meaningful differences in coordination rates or to achieve adequate statistical power for hypothesis testing.
+
+\item \textbf{No Baseline Comparison}
+
+The experiment lacks control conditions to establish baselines for comparison: no condition with zero communication, no condition with one exchange instead of three, and no random decision-making control. Without these baselines, we cannot isolate the causal effect of communication on coordination success or quantify the marginal benefit of each additional communication exchange.
+
+\item \textbf{Confounded Variables}
+
+Multiple factors vary simultaneously in the current design (belief formation, three-round communication, belief updates, and theory-of-mind predictions), making it impossible to isolate which mechanism drives coordination success. A factorial design systematically manipulating these factors (e.g., communication yes/no × belief updates yes/no × predictions yes/no) would allow us to identify the independent contribution of each mechanism and potential interaction effects.
+
+\item \textbf{Add Pre-Registration}
+
+For publication credibility and to avoid accusations of hypothesizing after results are known (HARKing), we should pre-register the experimental protocol, hypotheses, and analysis plan on a platform like OSF (Open Science Framework) before collecting data. Pre-registration establishes a timestamped record of our intended analyses and distinguishes confirmatory from exploratory findings, which is increasingly expected by top-tier journals in computational social science.
+
+\item \textbf{Compare Different LLM Models}
+
+The current experiment uses only GPT-5-nano, but different LLM architectures may exhibit systematically different strategic reasoning, theory-of-mind capabilities, or communication styles. Testing multiple models (e.g., GPT-4, Claude-3, Llama-3) would reveal whether our findings are model-specific artifacts or general properties of LLM-based agents, and could identify which model characteristics (e.g., training data, parameter count, RLHF approach) correlate with better coordination performance.
+
+\end{enumerate}
+
+\section*{Discussion Points}
+
+\subsection*{Priority for Implementation}
+Which of these issues should we address before the next round of data collection? Issues 2, 4, 7, and 8 (data capture, belief consistency, outcome simulation, temperature setting) are relatively straightforward fixes that would significantly improve data quality.
+
+\subsection*{Experimental Design Decisions}
+Issues 17-19 (sample size, baselines, confounds) require substantive methodological decisions about the experimental design—should we redesign for a factorial experiment, or proceed with the current design and note limitations?
+
+\subsection*{Publication Strategy}
+Issues 23-24 (pre-registration, model comparison) affect publication scope and timeline—do we want a narrow paper focused on GPT-5-nano with thorough characterization, or a broader comparative paper across models that would require more extensive data collection?
+
+\end{document}
