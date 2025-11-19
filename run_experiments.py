@@ -24,14 +24,14 @@ def run_experiment(run_number, total_runs):
         )
 
         print("\n" + "-"*80)
-        print(f"✓ Experiment {run_number} completed successfully")
+        print(f"[SUCCESS] Experiment {run_number} completed successfully")
         print("-"*80)
 
         return True
 
     except subprocess.CalledProcessError as e:
         print("\n" + "-"*80)
-        print(f"✗ Experiment {run_number} failed with error")
+        print(f"[FAILED] Experiment {run_number} failed with error")
         print(f"Error: {e}")
         print("-"*80)
 
@@ -44,7 +44,7 @@ def run_experiment(run_number, total_runs):
 
 def main():
     # Number of times to run the experiment
-    NUM_RUNS = 5  # Change this to run more or fewer experiments
+    NUM_RUNS = 8  # Change this to run more or fewer experiments
 
     print("\n" + "="*80)
     print("MULTI-RUN EXPERIMENT LAUNCHER")
