@@ -40,20 +40,44 @@ GAME RULES:
 # TASK CREATION
 # ============================================================================
 
-def create_task(task_id, u_value):
+def create_asymmetric_tasks(task_id):
     """
-    Creating a task with a given u_value and a payoff structure
+    Creating asymmetric tasks with different payoff structures and u-values for each agent
+
+    Agent 1: Options A, B, C, Y with u-value = 0.66
+    - At 66% belief, EV of collaboration = 50 (guaranteed)
+
+    Agent 2: Options K, L, M, Y with u-value = 0.75
+    - At 75% belief, EV of collaboration = 45 (guaranteed)
+    - Payoffs designed so: 0.75 * upside + 0.25 * downside = 45
     """
-    return {
+    # Agent 1: Original payoff structure, u-value = 0.66
+    task_agent1 = {
         "task_id": task_id,
+        "agent_id": 1,
         "options": {
             "A": {"upside": 111, "downside": -90},
             "B": {"upside": 92, "downside": -45},
             "C": {"upside": 77, "downside": -15},
             "Y": {"guaranteed": 50}
         },
-        "u_value": u_value
+        "u_value": 0.66
     }
+
+    # Agent 2: Asymmetric payoffs with different option names, u-value = 0.75
+    task_agent2 = {
+        "task_id": task_id,
+        "agent_id": 2,
+        "options": {
+            "K": {"upside": 90, "downside": -90},
+            "L": {"upside": 75, "downside": -45},
+            "M": {"upside": 65, "downside": -15},
+            "Y": {"guaranteed": 45}
+        },
+        "u_value": 0.75
+    }
+
+    return task_agent1, task_agent2
 
 
 # ============================================================================
@@ -111,9 +135,9 @@ def run_second_agent_belief(task):
 
     Task ID: {task['task_id']}
     Options:
-    - A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
-    - B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
-    - C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
+    - K: Upside = {task['options']['K']['upside']}, Downside = {task['options']['K']['downside']}
+    - L: Upside = {task['options']['L']['upside']}, Downside = {task['options']['L']['downside']}
+    - M: Upside = {task['options']['M']['upside']}, Downside = {task['options']['M']['downside']}
     - Y: Guaranteed = {task['options']['Y']['guaranteed']}
 
     What is your assessment of the likelihood(belief) (0-100) that collaboration would be successful in this specific task?
@@ -156,9 +180,9 @@ def agent_2_reply_to_agent_1(task, agent_1_message, agent_2_belief):
     Context for your reply:
     - Your initial assessment: You estimated a {agent_2_belief}% chance that collaboration would be successful
     - Task options available:
-      * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
-      * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
-      * C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
+      * K: Upside = {task['options']['K']['upside']}, Downside = {task['options']['K']['downside']}
+      * L: Upside = {task['options']['L']['upside']}, Downside = {task['options']['L']['downside']}
+      * M: Upside = {task['options']['M']['upside']}, Downside = {task['options']['M']['downside']}
       * Y: Guaranteed = {task['options']['Y']['guaranteed']}
 
     Create a strategic reply message to Agent 1. Your reply should:
@@ -267,9 +291,9 @@ def agent_2_second_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, 
     - Your previous prediction: After your first reply, you estimated Agent 1's belief was {agent_2_previous_prediction}%
       (You can compare this with Agent 1's actual follow-up message to adjust your strategy)
     - Task options available:
-      * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
-      * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
-      * C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
+      * K: Upside = {task['options']['K']['upside']}, Downside = {task['options']['K']['downside']}
+      * L: Upside = {task['options']['L']['upside']}, Downside = {task['options']['L']['downside']}
+      * M: Upside = {task['options']['M']['upside']}, Downside = {task['options']['M']['downside']}
       * Y: Guaranteed = {task['options']['Y']['guaranteed']}
 
     Create a strategic follow-up message to Agent 1. Your reply should:
@@ -388,9 +412,9 @@ def agent_2_third_reply_to_agent_1(task, agent_1_message, agent_2_first_reply, a
     - Your previous prediction: After your second reply, you estimated Agent 1's belief was {agent_2_previous_prediction}%
       (You can compare this with Agent 1's actual third message to adjust your strategy)
     - Task options available:
-      * A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
-      * B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
-      * C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
+      * K: Upside = {task['options']['K']['upside']}, Downside = {task['options']['K']['downside']}
+      * L: Upside = {task['options']['L']['upside']}, Downside = {task['options']['L']['downside']}
+      * M: Upside = {task['options']['M']['upside']}, Downside = {task['options']['M']['downside']}
       * Y: Guaranteed = {task['options']['Y']['guaranteed']}
 
     Create your final strategic message to Agent 1. Your reply should:
@@ -473,6 +497,12 @@ def run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_updated_
     - Your third message: "{agent1_third_message}"
     - Partner's third reply: "{agent2_third_reply}"
 
+    **Your Task Options**:
+    - A: Upside = {task['options']['A']['upside']}, Downside = {task['options']['A']['downside']}
+    - B: Upside = {task['options']['B']['upside']}, Downside = {task['options']['B']['downside']}
+    - C: Upside = {task['options']['C']['upside']}, Downside = {task['options']['C']['downside']}
+    - Y: Guaranteed = {task['options']['Y']['guaranteed']} points
+
     **Key Facts**:
     - The minimum required collaboration belief ("u-value"): {int(task['u_value']*100)} percent
 
@@ -527,11 +557,17 @@ def run_second_agent_decision(task, agent2_belief, agent1_belief, agent2_updated
     - Partner's third message: "{agent1_third_message}"
     - Your third reply: "{agent2_third_reply}"
 
+    **Your Task Options**:
+    - K: Upside = {task['options']['K']['upside']}, Downside = {task['options']['K']['downside']}
+    - L: Upside = {task['options']['L']['upside']}, Downside = {task['options']['L']['downside']}
+    - M: Upside = {task['options']['M']['upside']}, Downside = {task['options']['M']['downside']}
+    - Y: Guaranteed = {task['options']['Y']['guaranteed']} points
+
     **Key Facts**:
     - The minimum required collaboration belief ("u-value"): {int(task['u_value']*100)} percent
 
     Choose your car design:
-    - Designs A, B, or C (collaborative)
+    - Designs K, L, or M (collaborative)
     - Design Y (individual): Guaranteed {task['options']['Y']['guaranteed']} points
 
     Make your decision based on:
@@ -540,7 +576,7 @@ def run_second_agent_decision(task, agent2_belief, agent1_belief, agent2_updated
     3. The complete conversation history
     4. The u-value threshold
 
-    Respond in JSON format: {{"choice": "A"/"B"/"C"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}}"""
+    Respond in JSON format: {{"choice": "K"/"L"/"M"/"Y", "strategy": "collaborative"/"individual", "reasoning": "your explanation"}}"""
 
     response = client.chat.completions.create(
         model="gpt-5-nano",
@@ -584,17 +620,18 @@ def check_strategy_mismatch(agent1_strategy, agent2_strategy):
     return 0
 
 
-def save_result_to_file(task, agent1_decision, agent2_decision, agent1_belief, agent2_belief, mismatch):
+def save_result_to_file(task_agent1, task_agent2, agent1_decision, agent2_decision, agent1_belief, agent2_belief, mismatch):
     """
-    Append the test result to the results file
+    Append the test result to the results file for asymmetric tasks
     """
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with open(RESULTS_FILE, 'a', encoding='utf-8') as f:
         result_line = (
             f"{timestamp} | "
-            f"Task_ID:{task['task_id']} | "
-            f"U_Value:{task['u_value']} | "
+            f"Task_ID:{task_agent1['task_id']} | "
+            f"Agent1_U_Value:{task_agent1['u_value']} | "
+            f"Agent2_U_Value:{task_agent2['u_value']} | "
             f"Agent1_Belief:{agent1_belief} | "
             f"Agent2_Belief:{agent2_belief} | "
             f"Agent1_Choice:{agent1_decision['choice']} | "
@@ -614,22 +651,30 @@ def save_result_to_file(task, agent1_decision, agent2_decision, agent1_belief, a
 # ============================================================================
 
 def main():
-    task = create_task(task_id=1, u_value=0.95)
+    # Create asymmetric tasks for both agents
+    task_agent1, task_agent2 = create_asymmetric_tasks(task_id=1)
+
+    print("=" * 80)
+    print("ASYMMETRIC PAYOFF EXPERIMENT")
+    print("=" * 80)
+    print(f"Agent 1: Options A/B/C/Y, U-value={task_agent1['u_value']}")
+    print(f"Agent 2: Options K/L/M/Y, U-value={task_agent2['u_value']}")
+    print("=" * 80)
 
     # Step 1: Agent 1 forms belief and sends initial message
-    print("=== Agent 1 Belief ===")
-    agent1_belief_data = run_first_agent_belief(task)
+    print("\n=== Agent 1 Belief ===")
+    agent1_belief_data = run_first_agent_belief(task_agent1)
     agent1_belief = agent1_belief_data["belief"]
     agent1_message = agent1_belief_data["message_to_agent_2"]
 
     # Step 2: Agent 2 forms belief and sends first reply
     print("\n=== Agent 2 Belief ===")
-    agent2_belief_data = run_second_agent_belief(task)
+    agent2_belief_data = run_second_agent_belief(task_agent2)
     agent2_belief = agent2_belief_data["belief"]
     agent2_initial_message = agent2_belief_data["message_to_agent_1"]
 
     print("\n=== Agent 2's First Reply ===")
-    agent2_first_reply_data = agent_2_reply_to_agent_1(task, agent1_message, agent2_belief)
+    agent2_first_reply_data = agent_2_reply_to_agent_1(task_agent2, agent1_message, agent2_belief)
     agent2_first_reply = agent2_first_reply_data["reply_to_agent_1"]
     agent2_updated_belief_1 = agent2_first_reply_data["updated_belief"]
     agent2_predicted_agent1_belief_1 = agent2_first_reply_data["predicted_other_agent_belief"]
@@ -639,7 +684,7 @@ def main():
 
     # Step 3: Agent 1 sends second message
     print("\n=== Agent 1's Second Message ===")
-    agent1_second_message_data = agent_1_reply_to_agent_2(task, agent1_message, agent2_first_reply, agent1_belief)
+    agent1_second_message_data = agent_1_reply_to_agent_2(task_agent1, agent1_message, agent2_first_reply, agent1_belief)
     agent1_second_message = agent1_second_message_data["reply_to_agent_2"]
     agent1_updated_belief_1 = agent1_second_message_data["updated_belief"]
     agent1_predicted_agent2_belief_1 = agent1_second_message_data["predicted_other_agent_belief"]
@@ -649,7 +694,7 @@ def main():
 
     # Step 4: Agent 2 sends second reply (using updated belief from first exchange and previous prediction)
     print("\n=== Agent 2's Second Reply ===")
-    agent2_second_reply_data = agent_2_second_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_updated_belief_1, agent2_predicted_agent1_belief_1)
+    agent2_second_reply_data = agent_2_second_reply_to_agent_1(task_agent2, agent1_message, agent2_first_reply, agent1_second_message, agent2_updated_belief_1, agent2_predicted_agent1_belief_1)
     agent2_second_reply = agent2_second_reply_data["reply_to_agent_1"]
     agent2_updated_belief_2 = agent2_second_reply_data["updated_belief"]
     agent2_predicted_agent1_belief_2 = agent2_second_reply_data["predicted_other_agent_belief"]
@@ -659,7 +704,7 @@ def main():
 
     # Step 5: Agent 1 sends third message (using updated belief from first exchange and previous prediction)
     print("\n=== Agent 1's Third Message ===")
-    agent1_third_message_data = agent_1_third_message_to_agent_2(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_updated_belief_1, agent1_predicted_agent2_belief_1)
+    agent1_third_message_data = agent_1_third_message_to_agent_2(task_agent1, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_updated_belief_1, agent1_predicted_agent2_belief_1)
     agent1_third_message = agent1_third_message_data["message_to_agent_2"]
     agent1_updated_belief_2 = agent1_third_message_data["updated_belief"]
     agent1_predicted_agent2_belief_2 = agent1_third_message_data["predicted_other_agent_belief"]
@@ -669,7 +714,7 @@ def main():
 
     # Step 6: Agent 2 sends third reply (using updated belief from second exchange and previous prediction)
     print("\n=== Agent 2's Third Reply ===")
-    agent2_third_reply_data = agent_2_third_reply_to_agent_1(task, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_updated_belief_2, agent2_predicted_agent1_belief_2)
+    agent2_third_reply_data = agent_2_third_reply_to_agent_1(task_agent2, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_updated_belief_2, agent2_predicted_agent1_belief_2)
     agent2_third_reply = agent2_third_reply_data["reply_to_agent_1"]
     agent2_updated_belief_3 = agent2_third_reply_data["updated_belief"]
     agent2_predicted_agent1_belief_3 = agent2_third_reply_data["predicted_other_agent_belief"]
@@ -682,10 +727,10 @@ def main():
 
     # Step 7: Both agents make decisions with full conversation history
     print("=== Agent 1 Decision ===")
-    agent1_decision = run_first_agent_decision(task, agent1_belief, agent2_belief, agent1_updated_belief_2, agent1_predicted_agent2_belief_2, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
+    agent1_decision = run_first_agent_decision(task_agent1, agent1_belief, agent2_belief, agent1_updated_belief_2, agent1_predicted_agent2_belief_2, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
 
     print("\n=== Agent 2 Decision ===")
-    agent2_decision = run_second_agent_decision(task, agent2_belief, agent1_belief, agent2_updated_belief_3, agent2_predicted_agent1_belief_3, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
+    agent2_decision = run_second_agent_decision(task_agent2, agent2_belief, agent1_belief, agent2_updated_belief_3, agent2_predicted_agent1_belief_3, agent1_message, agent2_first_reply, agent1_second_message, agent2_second_reply, agent1_third_message, agent2_third_reply)
 
     print("\nFinal Decisions:")
     safe_print(f"Agent 1 chose {agent1_decision['choice']} ({agent1_decision['strategy']}) - Reasoning: {agent1_decision['reasoning']}")
@@ -693,7 +738,7 @@ def main():
 
     # Check for strategy mismatch and save results
     mismatch = check_strategy_mismatch(agent1_decision['strategy'], agent2_decision['strategy'])
-    save_result_to_file(task, agent1_decision, agent2_decision, agent1_belief, agent2_belief, mismatch)
+    save_result_to_file(task_agent1, task_agent2, agent1_decision, agent2_decision, agent1_belief, agent2_belief, mismatch)
 
 
 if __name__ == "__main__":
