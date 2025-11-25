@@ -53,37 +53,40 @@ def create_asymmetric_tasks(task_id):
     """
     Creating asymmetric tasks with different payoff structures and u-values for each agent
 
-    Agent 1: Options A, B, C, Y with u-value = 0.66
-    - At 66% belief, EV of collaboration = 50 (guaranteed)
+    Agent 1: Options A, B, C, Y with u-value = 0.85
+    - At 85% belief, EV of collaboration = 50 (guaranteed)
+    - Payoffs designed so: 0.85 * upside + 0.15 * downside = 50
 
-    Agent 2: Options K, L, M, Y with u-value = 0.75
-    - At 75% belief, EV of collaboration = 45 (guaranteed)
-    - Payoffs designed so: 0.75 * upside + 0.25 * downside = 45
+    Agent 2: Options K, L, M, Y with u-value = 0.91
+    - At 91% belief, EV of collaboration = 45 (guaranteed)
+    - Payoffs designed so: 0.91 * upside + 0.09 * downside = 45
     """
-    # Agent 1: Original payoff structure, u-value = 0.66
+    # Agent 1: u-value = 0.85
+    # Payoffs calculated: 0.85 * upside + 0.15 * downside = 50
     task_agent1 = {
         "task_id": task_id,
         "agent_id": 1,
         "options": {
-            "A": {"upside": 111, "downside": -90},
-            "B": {"upside": 92, "downside": -45},
-            "C": {"upside": 77, "downside": -15},
+            "A": {"upside": 75, "downside": -90},
+            "B": {"upside": 67, "downside": -45},
+            "C": {"upside": 61, "downside": -15},
             "Y": {"guaranteed": 50}
         },
-        "u_value": 0.66
+        "u_value": 0.85
     }
 
-    # Agent 2: Asymmetric payoffs with different option names, u-value = 0.75
+    # Agent 2: u-value = 0.91
+    # Payoffs calculated: 0.91 * upside + 0.09 * downside = 45
     task_agent2 = {
         "task_id": task_id,
         "agent_id": 2,
         "options": {
-            "K": {"upside": 90, "downside": -90},
-            "L": {"upside": 75, "downside": -45},
-            "M": {"upside": 65, "downside": -15},
+            "K": {"upside": 58, "downside": -90},
+            "L": {"upside": 54, "downside": -45},
+            "M": {"upside": 51, "downside": -15},
             "Y": {"guaranteed": 45}
         },
-        "u_value": 0.75
+        "u_value": 0.91
     }
 
     return task_agent1, task_agent2
