@@ -1,4 +1,4 @@
-# Collaborative Systems Experiment with LLMs
+# Collaborative Systems Experiment with LLMs and researching on it
 
 ## Overview
 
@@ -373,3 +373,4 @@ If you use this experimental framework in your research, please cite:
 **Last Updated**: 2025-11-14
 **Status**: Active Development
 **Current Version**: v2.0 (Three-Exchange Protocol with Belief Evolution)
+
