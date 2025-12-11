@@ -44,7 +44,7 @@ def run_experiment(run_number, total_runs):
 
 def main():
     # Number of times to run the experiment
-    NUM_RUNS = 7 # Change this to run more or fewer experiments
+    NUM_RUNS = 2 # Change this to run more or fewer experiments
 
     print("\n" + "="*80)
     print("ASYMMETRIC MULTI-RUN EXPERIMENT LAUNCHER")

@@ -67,9 +67,9 @@ def create_asymmetric_tasks(task_id):
         "task_id": task_id,
         "agent_id": 1,
         "options": {
-            "A": {"upside": 75, "downside": -90},
-            "B": {"upside": 67, "downside": -45},
-            "C": {"upside": 61, "downside": -15},
+            "A": {"upside": 62 , "downside": -90},
+            "B": {"upside": 59, "downside": -45},
+            "C": {"upside": 55, "downside": -15},
             "Y": {"guaranteed": 50}
         },
         "u_value": 0.85

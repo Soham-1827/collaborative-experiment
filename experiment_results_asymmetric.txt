@@ -6,6 +6,7 @@
 2025-11-19 10:53:54 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.75 | Agent1_Belief:40 | Agent2_Belief:60 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:K | Agent2_Strategy:collaborative | Mismatch:0
 2025-11-19 10:58:28 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.75 | Agent1_Belief:85 | Agent2_Belief:40 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:K | Agent2_Strategy:collaborative | Mismatch:0
 2025-11-19 11:03:14 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.75 | Agent1_Belief:40 | Agent2_Belief:40 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:K | Agent2_Strategy:collaborative | Mismatch:0
+
 2025-11-19 11:18:24 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.85 | Agent1_Belief:35 | Agent2_Belief:35 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
 2025-11-19 11:22:45 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.85 | Agent1_Belief:45 | Agent2_Belief:28 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
 2025-11-19 11:27:05 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.85 | Agent1_Belief:55 | Agent2_Belief:50 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
@@ -13,15 +14,22 @@
 2025-11-19 11:33:29 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.85 | Agent1_Belief:65 | Agent2_Belief:45 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
 2025-11-19 11:41:05 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.85 | Agent1_Belief:60 | Agent2_Belief:95 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:K | Agent2_Strategy:collaborative | Mismatch:0
 2025-11-19 11:46:51 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.85 | Agent1_Belief:40 | Agent2_Belief:88 | Agent1_Choice:B | Agent1_Strategy:collaborative | Agent2_Choice:K | Agent2_Strategy:collaborative | Mismatch:0
+2025-12-11 01:23:20 | Task_ID:1 | Agent1_U_Value:0.66 | Agent2_U_Value:0.85 | Agent1_Belief:70 | Agent2_Belief:40 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
+
 2025-11-19 11:52:21 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:40 | Agent2_Belief:40 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
 2025-11-19 11:56:47 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:45 | Agent2_Belief:40 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
 2025-11-19 11:59:47 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:35 | Agent2_Belief:28 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
 2025-11-19 12:04:16 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:60 | Agent2_Belief:45 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
 2025-11-19 12:12:46 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:92 | Agent2_Belief:28 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
 2025-11-19 12:17:31 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:45 | Agent2_Belief:25 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
+2025-12-11 01:29:37 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:58 | Agent2_Belief:55 | Agent1_Choice:B | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
+2025-12-11 01:34:00 | Task_ID:1 | Agent1_U_Value:0.75 | Agent2_U_Value:0.91 | Agent1_Belief:55 | Agent2_Belief:12 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
+
 2025-11-19 12:21:43 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:40 | Agent2_Belief:80 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:K | Agent2_Strategy:collaborative | Mismatch:1
 2025-11-19 12:25:26 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:30 | Agent2_Belief:25 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
 2025-11-19 12:28:44 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:40 | Agent2_Belief:85 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:K | Agent2_Strategy:collaborative | Mismatch:1
 2025-11-19 12:31:55 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:85 | Agent2_Belief:55 | Agent1_Choice:A | Agent1_Strategy:collaborative | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:1
 2025-11-19 12:34:57 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:40 | Agent2_Belief:30 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
 2025-11-19 12:38:38 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:45 | Agent2_Belief:28 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
+2025-12-11 01:42:18 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:90 | Agent2_Belief:30 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
+2025-12-11 01:45:49 | Task_ID:1 | Agent1_U_Value:0.85 | Agent2_U_Value:0.91 | Agent1_Belief:40 | Agent2_Belief:25 | Agent1_Choice:Y | Agent1_Strategy:individual | Agent2_Choice:Y | Agent2_Strategy:individual | Mismatch:0
