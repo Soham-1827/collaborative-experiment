@@ -1,5 +1,5 @@
-# Collaborative Systems Experiment with LLMs
-
+# Collaborative Systems Experiment with LLMs and researching on it
+Currently working on a shot paper for CSER, draft 2
 ## Overview
 
 This repository contains research experiments investigating how Large Language Models (LLMs) collaborate and make decisions in strategic scenarios with varying levels of communication. The experiments simulate a paired decision-making game where two AI agents must decide between collaborative and individual strategies based on belief formation, communication, and risk assessment.
@@ -373,3 +373,5 @@ If you use this experimental framework in your research, please cite:
 **Last Updated**: 2025-11-14
 **Status**: Active Development
 **Current Version**: v2.0 (Three-Exchange Protocol with Belief Evolution)
+
+
